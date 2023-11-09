@@ -174,3 +174,36 @@ class Salon:
             logging.error("Error Getting service_id %s", error)
             sys.exit(1)
         return booking_id
+
+    def get_booking_slot(self, slot_id):
+        headers = {
+            "Authorization": "apikey " + self.zenoti_api_key,
+        }
+        payload = {
+            "date": self.today_date,
+            "is_only_catalog_employes": True,
+            "center_id": self.store_id,
+            "guests": [
+                {
+                    "id": "b216878c-727a-4c77-a2e8-6d899855952c",
+                    "items": [
+                        {
+                            "item": {"id": service["id"]},
+                            "therapist": {
+                                "id": stylist["id"],
+                                "Gender": stylist["personal_info"]["gender"],
+                            },
+                        }
+                    ],
+                }
+            ],
+        }
+        logging.info("Getting Service booking_id")
+        request_url = self.zenoti_api_url + f"bookings"
+        try:
+            response = requests.post(request_url, json=payload, headers=headers)
+            booking_id = response.json()
+        except Exception as error:
+            logging.error("Error Getting service_id %s", error)
+            sys.exit(1)
+        return booking_id
