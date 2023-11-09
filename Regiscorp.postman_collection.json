@@ -1,0 +1,552 @@
+{
+	"info": {
+		"_postman_id": "46927ff3-309d-470c-aad1-6b515f51127b",
+		"name": "Regiscorp",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "27947069"
+	},
+	"item": [
+		{
+			"name": "Zenoti",
+			"item": [
+				{
+					"name": "getAttendance",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/118.0"
+							},
+							{
+								"key": "Accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en-US,en;q=0.5"
+							},
+							{
+								"key": "Accept-Encoding",
+								"value": "gzip, deflate, br"
+							},
+							{
+								"key": "Authorization",
+								"value": "apikey cbd95bc49ada48c6a347b6a4ce76c15ac314f4d007464813b86788931a99a750"
+							},
+							{
+								"key": "Origin",
+								"value": "https://www.supercuts.com"
+							},
+							{
+								"key": "Connection",
+								"value": "keep-alive"
+							},
+							{
+								"key": "Referer",
+								"value": "https://www.supercuts.com/"
+							},
+							{
+								"key": "Sec-Fetch-Dest",
+								"value": "empty"
+							},
+							{
+								"key": "Sec-Fetch-Mode",
+								"value": "cors"
+							},
+							{
+								"key": "Sec-Fetch-Site",
+								"value": "cross-site"
+							},
+							{
+								"key": "TE",
+								"value": "trailers"
+							}
+						],
+						"url": {
+							"raw": "https://api.zenoti.com/v1/employees/4a1c2dff-ec3f-4b61-871c-9b6dd88cfe46/attendance?center_id=5b9835ff-5809-43c5-a2a7-8f797fa658d2&start_date=2023-11-07&end_date=2023-11-07&expand=work_task&0=us",
+							"protocol": "https",
+							"host": [
+								"api",
+								"zenoti",
+								"com"
+							],
+							"path": [
+								"v1",
+								"employees",
+								"4a1c2dff-ec3f-4b61-871c-9b6dd88cfe46",
+								"attendance"
+							],
+							"query": [
+								{
+									"key": "center_id",
+									"value": "5b9835ff-5809-43c5-a2a7-8f797fa658d2"
+								},
+								{
+									"key": "start_date",
+									"value": "2023-11-07"
+								},
+								{
+									"key": "end_date",
+									"value": "2023-11-07"
+								},
+								{
+									"key": "expand",
+									"value": "work_task"
+								},
+								{
+									"key": "0",
+									"value": "us"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getTherapists",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "apikey cbd95bc49ada48c6a347b6a4ce76c15ac314f4d007464813b86788931a99a750",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "Authorization",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/118.0"
+							},
+							{
+								"key": "Accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en-US,en;q=0.5"
+							},
+							{
+								"key": "Accept-Encoding",
+								"value": "gzip, deflate, br"
+							},
+							{
+								"key": "Origin",
+								"value": "https://www.supercuts.com"
+							},
+							{
+								"key": "Connection",
+								"value": "keep-alive"
+							},
+							{
+								"key": "Referer",
+								"value": "https://www.supercuts.com/"
+							},
+							{
+								"key": "Sec-Fetch-Dest",
+								"value": "empty"
+							},
+							{
+								"key": "Sec-Fetch-Mode",
+								"value": "cors"
+							},
+							{
+								"key": "Sec-Fetch-Site",
+								"value": "cross-site"
+							},
+							{
+								"key": "TE",
+								"value": "trailers"
+							}
+						],
+						"url": {
+							"raw": "https://api.zenoti.com/v1/centers/5b9835ff-5809-43c5-a2a7-8f797fa658d2/therapists?date=2023-11-06&0=us",
+							"protocol": "https",
+							"host": [
+								"api",
+								"zenoti",
+								"com"
+							],
+							"path": [
+								"v1",
+								"centers",
+								"5b9835ff-5809-43c5-a2a7-8f797fa658d2",
+								"therapists"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "2023-11-06"
+								},
+								{
+									"key": "0",
+									"value": "us"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getBookingForTherapist",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/118.0"
+							},
+							{
+								"key": "Accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en-US,en;q=0.5"
+							},
+							{
+								"key": "Accept-Encoding",
+								"value": "gzip, deflate, br"
+							},
+							{
+								"key": "Authorization",
+								"value": "apikey cbd95bc49ada48c6a347b6a4ce76c15ac314f4d007464813b86788931a99a750"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							},
+							{
+								"key": "Origin",
+								"value": "https://www.supercuts.com"
+							},
+							{
+								"key": "Connection",
+								"value": "keep-alive"
+							},
+							{
+								"key": "Referer",
+								"value": "https://www.supercuts.com/"
+							},
+							{
+								"key": "Sec-Fetch-Dest",
+								"value": "empty"
+							},
+							{
+								"key": "Sec-Fetch-Mode",
+								"value": "cors"
+							},
+							{
+								"key": "Sec-Fetch-Site",
+								"value": "cross-site"
+							},
+							{
+								"key": "TE",
+								"value": "trailers"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\"center_id\":\"5b9835ff-5809-43c5-a2a7-8f797fa658d2\",\"date\":\"2023-11-07\",\"is_only_catalog_employees\":true,\"guests\":[{\"id\":\"b216878c-727a-4c77-a2e8-6d899855952c\",\"items\":[{\"item\":{\"id\":\"ba75571f-6fc9-43f4-bfa2-3a5e95682ee4\"},\"therapist\":{\"id\":\"852e9b0b-aace-4621-a379-ffb0eb61d38a\",\"Gender\":3}}]}]}"
+						},
+						"url": {
+							"raw": "https://api.zenoti.com/v1/bookings?0=us",
+							"protocol": "https",
+							"host": [
+								"api",
+								"zenoti",
+								"com"
+							],
+							"path": [
+								"v1",
+								"bookings"
+							],
+							"query": [
+								{
+									"key": "0",
+									"value": "us"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getSlotsforTherapist",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/118.0"
+							},
+							{
+								"key": "Accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en-US,en;q=0.5"
+							},
+							{
+								"key": "Accept-Encoding",
+								"value": "gzip, deflate, br"
+							},
+							{
+								"key": "Authorization",
+								"value": "apikey cbd95bc49ada48c6a347b6a4ce76c15ac314f4d007464813b86788931a99a750"
+							},
+							{
+								"key": "Origin",
+								"value": "https://www.supercuts.com"
+							},
+							{
+								"key": "Connection",
+								"value": "keep-alive"
+							},
+							{
+								"key": "Referer",
+								"value": "https://www.supercuts.com/"
+							},
+							{
+								"key": "Sec-Fetch-Dest",
+								"value": "empty"
+							},
+							{
+								"key": "Sec-Fetch-Mode",
+								"value": "cors"
+							},
+							{
+								"key": "Sec-Fetch-Site",
+								"value": "cross-site"
+							},
+							{
+								"key": "TE",
+								"value": "trailers"
+							}
+						],
+						"url": {
+							"raw": "https://api.zenoti.com/v1/bookings/a3473b6e-f778-4056-bd2f-edb63fdca963/slots?0=us",
+							"protocol": "https",
+							"host": [
+								"api",
+								"zenoti",
+								"com"
+							],
+							"path": [
+								"v1",
+								"bookings",
+								"a3473b6e-f778-4056-bd2f-edb63fdca963",
+								"slots"
+							],
+							"query": [
+								{
+									"key": "0",
+									"value": "us"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "getSalonServices",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "User-Agent",
+								"value": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:109.0) Gecko/20100101 Firefox/118.0"
+							},
+							{
+								"key": "Accept",
+								"value": "*/*"
+							},
+							{
+								"key": "Accept-Language",
+								"value": "en-US,en;q=0.5"
+							},
+							{
+								"key": "Accept-Encoding",
+								"value": "gzip, deflate, br"
+							},
+							{
+								"key": "Authorization",
+								"value": "apikey cbd95bc49ada48c6a347b6a4ce76c15ac314f4d007464813b86788931a99a750"
+							},
+							{
+								"key": "Origin",
+								"value": "https://www.supercuts.com"
+							},
+							{
+								"key": "Connection",
+								"value": "keep-alive"
+							},
+							{
+								"key": "Referer",
+								"value": "https://www.supercuts.com/"
+							},
+							{
+								"key": "Sec-Fetch-Dest",
+								"value": "empty"
+							},
+							{
+								"key": "Sec-Fetch-Mode",
+								"value": "cors"
+							},
+							{
+								"key": "Sec-Fetch-Site",
+								"value": "cross-site"
+							},
+							{
+								"key": "TE",
+								"value": "trailers"
+							}
+						],
+						"url": {
+							"raw": "https://api.zenoti.com/v1/centers/5b9835ff-5809-43c5-a2a7-8f797fa658d2/services?catalog_enabled=true&expand=additional_info&expand=catalog_info&size=100&0=us",
+							"protocol": "https",
+							"host": [
+								"api",
+								"zenoti",
+								"com"
+							],
+							"path": [
+								"v1",
+								"centers",
+								"5b9835ff-5809-43c5-a2a7-8f797fa658d2",
+								"services"
+							],
+							"query": [
+								{
+									"key": "catalog_enabled",
+									"value": "true"
+								},
+								{
+									"key": "expand",
+									"value": "additional_info"
+								},
+								{
+									"key": "expand",
+									"value": "catalog_info"
+								},
+								{
+									"key": "size",
+									"value": "100"
+								},
+								{
+									"key": "0",
+									"value": "us"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "getSalon",
+			"request": {
+				"auth": {
+					"type": "apikey",
+					"apikey": [
+						{
+							"key": "value",
+							"value": "g8nErx4AEZ33zDTAjoujyjj93NYImYjNVqlArp6ucK0Tz7g0PlJ4DUolvOKICSw2",
+							"type": "string"
+						},
+						{
+							"key": "key",
+							"value": "Authorization",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [
+					{
+						"key": "Accept",
+						"value": "*/*"
+					},
+					{
+						"key": "Accept-Language",
+						"value": "en-US,en;q=0.5"
+					},
+					{
+						"key": "Accept-Encoding",
+						"value": "gzip, deflate, br"
+					},
+					{
+						"key": "Origin",
+						"value": "https://www.supercuts.com"
+					},
+					{
+						"key": "Connection",
+						"value": "keep-alive"
+					},
+					{
+						"key": "Referer",
+						"value": "https://www.supercuts.com/"
+					},
+					{
+						"key": "Sec-Fetch-Dest",
+						"value": "empty"
+					},
+					{
+						"key": "Sec-Fetch-Mode",
+						"value": "cors"
+					},
+					{
+						"key": "Sec-Fetch-Site",
+						"value": "cross-site"
+					},
+					{
+						"key": "TE",
+						"value": "trailers"
+					}
+				],
+				"url": {
+					"raw": "https://api.regiscorp.com/sis/api/salon?salon-number=82227",
+					"protocol": "https",
+					"host": [
+						"api",
+						"regiscorp",
+						"com"
+					],
+					"path": [
+						"sis",
+						"api",
+						"salon"
+					],
+					"query": [
+						{
+							"key": "salon-number",
+							"value": "82227"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "zenoti_id",
+			"value": "5b9835ff-5809-43c5-a2a7-8f797fa658d2"
+		},
+		{
+			"key": "slot_id",
+			"value": "/a3473b6e-f778-4056-bd2f-edb63fdca963"
+		}
+	]
+}
