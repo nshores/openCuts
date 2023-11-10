@@ -12,6 +12,8 @@ import requests
         - Get people on schedule for the specified salon and date
         - Get available time slots for combination of stylist and service
         - schedule appointment (reserve slot)
+        #TODO - search for a user
+        #TODO - create a user
         #TODO - cancel appointment for user
         #TODO - see upcoming appointments for user
         #TODO - Support for all pos_types
@@ -70,7 +72,7 @@ class Salon:
             self.pos_type = response.json().get("pos_type", None)
         except Exception as error:
             logging.error("Error getting Zenoti API Key %s", error)
-            sys.exit(1)
+            return None
         return self.zenoti_api_key, self.store_id, self.pos_type
 
     def get_salon_services(self):
@@ -87,7 +89,7 @@ class Salon:
             self.store_services = response.json().get("services", None)
         except Exception as error:
             logging.error("Error Geting Store Services %s", error)
-            sys.exit(1)
+            return None
         return self.store_services
 
     def get_therapists_working(self):
@@ -102,7 +104,7 @@ class Salon:
             self.therapists = response.json().get("therapists", None)
         except Exception as error:
             logging.error("Error Geting Store therapists %s", error)
-            sys.exit(1)
+            return None
         return self.therapists
 
     def get_attendance(self, name):
@@ -126,7 +128,7 @@ class Salon:
             self.attendance_total = response.json().get("total_records", None)
         except Exception as error:
             logging.error("Error Geting Store Therapist Attendance %s", error)
-            sys.exit(1)
+            return None
         return self.attendance, self.attendance_total
 
     def find_stylist_by_name(self, stylist_name):
@@ -143,6 +145,10 @@ class Salon:
 
     # https://docs.zenoti.com/reference/create-a-service-booking
     def create_service_booking(self, service, stylist):
+        """This method expects a service and stylist object.
+        It will return a unique service ID that can be passed to get_booking_slot
+        to get an object containing available booking slots for the combination of an service, stylist, and location.
+        """
         # This defaults to "next available" if no stylist is defined.
         if not stylist:
             stylist = {}
@@ -158,6 +164,8 @@ class Salon:
             "center_id": self.store_id,
             "guests": [
                 {
+                    # Hard coded to nick shores guest ID right now
+                    # need to handle looking up an existing guest, or creating a new one
                     "id": "b216878c-727a-4c77-a2e8-6d899855952c",
                     "items": [
                         {
@@ -178,7 +186,7 @@ class Salon:
             booking_id = response.json()
         except Exception as error:
             logging.error("Error Getting service_id %s", error)
-            sys.exit(1)
+            return None
         return booking_id
 
     # Take your {booking_id} and GET  https: //api.zenoti.com/v1/bookings/{slot_id}/slots?0=us
@@ -199,22 +207,47 @@ class Salon:
             return booking_slots
         except Exception as error:
             logging.error("Error Getting booking_slots %s", error)
-            sys.exit(1)
+            return None
 
     # reserve a slot
     def reserve_selected_slot(self, selected_slot, booking_id):
         headers = {
             "Authorization": "apikey " + self.zenoti_api_key,
         }
-        payload = {"slot_time": selected_slot}
-        request_url = self.zenoti_api_url + f"bookings/{booking_id}/slots/reserve"
+        payload = {"slot_time": selected_slot["Time"]}
+        request_url = self.zenoti_api_url + f"bookings/{booking_id['id']}/slots/reserve"
         logging.info("Trying to reserve your slot")
         try:
             response = requests.post(request_url, json=payload, headers=headers)
-            booking_id = response.json()
+            response = response.json()
         except Exception as error:
-            logging.error("Error Getting service_id %s", error)
-            sys.exit(1)
+            logging.error("Error Reserving Slot %s", error)
+            return None
+        return response
 
+    # Confirm your slot
+    def confirm_selected_slot(self, booking_id):
+        headers = {
+            "Authorization": "apikey " + self.zenoti_api_key,
+        }
+        payload = {
+            "notes": "",
+            "group_name": "",
+        }
+        request_url = self.zenoti_api_url + f"bookings/{booking_id['id']}/slots/confirm"
+        logging.info("Trying to confirm your slot")
+        try:
+            response = requests.post(request_url, json=payload, headers=headers)
+            response = response.json()
+        except Exception as error:
+            logging.error("Error Confirming Slot %s", error)
+            return None
+        return response
 
-# A function for presenting and choosing a slot?
+    # Check Appointments for user
+
+    # cancel appointsments for user
+
+    # check for a user account
+
+    # create a user account

@@ -38,20 +38,26 @@ if __name__ == "__main__":
     # pprint(booking_slots["slots"])
     # Present and select a slot if there are any slots available
     if len(booking_slots) > 0:
-        slot_num = 0
-        for slot in booking_slots["slots"]:
-            slot_num += 1
-            print(f"Slot Num {slot_num} - Time Slot {slot['Time'] } Available")
+        # Using enumerate with its default start value (0)
+        for slot_num, slot in enumerate(booking_slots["slots"]):
+            print(f"Slot Num {slot_num} - Time Slot {slot['Time']} Available")
         selected_slot = None
         while selected_slot is None:
-            selected_slot = input("Select Slot:")
-            selected_slot = booking_slots["slots"][
-                selected_slot
-            ]  # Assign the selected slot
-        print("Selected Slot:" + selected_slot["Time"])
-        print("Selecting slot")
+            selected_slot_num = int(input("Select Slot:"))
+            # Directly use the input number as the index
+            selected_slot = booking_slots["slots"][selected_slot_num]
+        print("Selected Slot: " + selected_slot["Time"])
+        print("Reserving slot")
         try:
-            myStore.reserve_selected_slot()
+            myStore.reserve_selected_slot(selected_slot, booking_id)
+        except:
+            print("Could not reserve slot")
+            sys.exit()
+        print("Confirming Slot")
+        try:
+            myStore.confirm_selected_slot(booking_id)
+        except:
+            print("Could not confirm slot")
 
 
 ##DEBUG
