@@ -10,7 +10,7 @@ import requests
         - Get Salon Services
         - Get Therapists working at store at a specified date
         - Get people on schedule for the specified salon and date
-        #TODO - Get available time slots for combination of stylist and service
+        - Get available time slots for combination of stylist and service
         #TODO - schedule appointment (reserve slot)
         #TODO - cancel appointment for user
         #TODO - see upcoming appointments for user
@@ -143,6 +143,11 @@ class Salon:
 
     # https://docs.zenoti.com/reference/create-a-service-booking
     def create_service_booking(self, service, stylist):
+        if not stylist:
+            stylist = {}
+            stylist["personal_info"] = {}
+            stylist["personal_info"]["gender"] = "0"
+            stylist["id"] = ""
         headers = {
             "Authorization": "apikey " + self.zenoti_api_key,
         }
@@ -175,35 +180,40 @@ class Salon:
             sys.exit(1)
         return booking_id
 
+    # Take your {booking_id} and GET  https: //api.zenoti.com/v1/bookings/{slot_id}/slots?0=us
     def get_booking_slot(self, slot_id):
+        slot_id = slot_id["id"]
         headers = {
             "Authorization": "apikey " + self.zenoti_api_key,
         }
-        payload = {
-            "date": self.today_date,
-            "is_only_catalog_employes": True,
-            "center_id": self.store_id,
-            "guests": [
-                {
-                    "id": "b216878c-727a-4c77-a2e8-6d899855952c",
-                    "items": [
-                        {
-                            "item": {"id": service["id"]},
-                            "therapist": {
-                                "id": stylist["id"],
-                                "Gender": stylist["personal_info"]["gender"],
-                            },
-                        }
-                    ],
-                }
-            ],
-        }
-        logging.info("Getting Service booking_id")
-        request_url = self.zenoti_api_url + f"bookings"
+        logging.info(f"Getting Booking Slot with ${slot_id}")
+        request_url = self.zenoti_api_url + f"bookings/{slot_id}/slots"
         try:
-            response = requests.post(request_url, json=payload, headers=headers)
-            booking_id = response.json()
+            response = requests.get(request_url, headers=headers)
+            booking_slots = response.json()
+            if len(booking_slots["slots"]) < 1:
+                print("No Booking slots available for the time and stylist requested")
+                booking_slots = 0
+                return {}
+            return booking_slots
         except Exception as error:
-            logging.error("Error Getting service_id %s", error)
+            logging.error("Error Getting booking_slots %s", error)
             sys.exit(1)
-        return booking_id
+
+    # reserve a slot
+    def reserve_selected_slot(self, selected_slot, booking_id):
+        # https://api.zenoti.com/v1/bookings/{booking_id}/slots/reserve
+
+        url = "https://api.zenoti.com/v1/bookings/booking_id/slots/reserve"
+
+        payload = {"slot_time": "2020-06-15T05:50:58"}
+        headers = {
+            "accept": "application/json",
+            "content-type": "application/json",
+            "Authorization": "apikey <your api key>",
+        }
+
+        response = requests.post(url, json=payload, headers=headers)
+
+
+# A function for presenting and choosing a slot?
