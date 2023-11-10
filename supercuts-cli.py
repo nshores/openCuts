@@ -4,6 +4,9 @@ import os
 import sys
 from pprint import *
 
+""" A CLI for Supercuts.
+"""
+
 if __name__ == "__main__":
     if not os.path.exists("config.ini"):
         print("Error: The config file does not exist.")

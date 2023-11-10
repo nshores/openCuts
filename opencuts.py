@@ -11,7 +11,7 @@ import requests
         - Get Therapists working at store at a specified date
         - Get people on schedule for the specified salon and date
         - Get available time slots for combination of stylist and service
-        #TODO - schedule appointment (reserve slot)
+        - schedule appointment (reserve slot)
         #TODO - cancel appointment for user
         #TODO - see upcoming appointments for user
         #TODO - Support for all pos_types
@@ -143,6 +143,7 @@ class Salon:
 
     # https://docs.zenoti.com/reference/create-a-service-booking
     def create_service_booking(self, service, stylist):
+        # This defaults to "next available" if no stylist is defined.
         if not stylist:
             stylist = {}
             stylist["personal_info"] = {}
@@ -202,18 +203,18 @@ class Salon:
 
     # reserve a slot
     def reserve_selected_slot(self, selected_slot, booking_id):
-        # https://api.zenoti.com/v1/bookings/{booking_id}/slots/reserve
-
-        url = "https://api.zenoti.com/v1/bookings/booking_id/slots/reserve"
-
-        payload = {"slot_time": "2020-06-15T05:50:58"}
         headers = {
-            "accept": "application/json",
-            "content-type": "application/json",
-            "Authorization": "apikey <your api key>",
+            "Authorization": "apikey " + self.zenoti_api_key,
         }
-
-        response = requests.post(url, json=payload, headers=headers)
+        payload = {"slot_time": selected_slot}
+        request_url = self.zenoti_api_url + f"bookings/{booking_id}/slots/reserve"
+        logging.info("Trying to reserve your slot")
+        try:
+            response = requests.post(request_url, json=payload, headers=headers)
+            booking_id = response.json()
+        except Exception as error:
+            logging.error("Error Getting service_id %s", error)
+            sys.exit(1)
 
 
 # A function for presenting and choosing a slot?
