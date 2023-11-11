@@ -244,10 +244,10 @@ class Salon:
             return None
         return response
 
+    # check for a user account existing
+
+    # Create a user account
+
     # Check Appointments for user
 
     # cancel appointsments for user
-
-    # check for a user account existing
-
-    # create a user account

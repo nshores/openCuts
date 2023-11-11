@@ -1,16 +1,14 @@
 # openCuts 💇 - Automate your Haircuts
 
-`openCuts` 💇 is an open-source Python library designed to interface with popular salons using public and private API's. It provides a common interface to the  Zeonti (Supercuts), Regis (Supercuts) and StylewareTouch (Greatclips) API's to provide a seamless experience for retrieving salon services, scheduling appointments, and more. This is meant to be used to build future extensions for Home Assistant, Alexa, Google Home, etc.
+**`openCuts`** 💇 is an open-source Python library designed to interface with popular salons using public and private API's. It provides a common interface to the  Zeonti (Supercuts), Regis (Supercuts) and StylewareTouch (Greatclips) API's to provide a seamless experience for retrieving salon services, scheduling appointments, and more. This is meant to be used to build future extensions for Home Assistant, Voice Assistants, etc.
 
 ## Disclaimer  ✂
 
-```
-This project relies on private API's hosted by the Regis Corporation, Zenoti, and Greatclips for core functionality. This project is not endorsed or affiliated with those companies in any way. This is a private project not related to my {dayjob} and a completely independent work. 
+<em>This project relies on private API's hosted by the Regis Corporation, Zenoti, and Greatclips for core functionality. This project is not endorsed or affiliated with those companies in any way. This is a private project not related to my {dayjob} and a completely independent work.
 
 This is meant to be a light hearted attempt at solving a "first-world problem" (Automation of scheduling a hair cut) with Python for fun and learning. This is not meant to interfere with, replace, or degrade the services of any of the parent companies. Please do not use this library in a malicious way.  
 
-This library can break at any time, as the companies can change the way their API functions, revoke the keys, or otherwise restrict the scope of programmatically interacting with their salons.
-```
+This library can break at any time, as the companies can change the way their API functions, revoke the keys, or otherwise restrict the scope of programmatically interacting with their salons. </em>
 
 ## Currently Supported Salons 💈
 
