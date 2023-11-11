@@ -19,8 +19,8 @@ if __name__ == "__main__":
     # Get values from the config file
     SALON_ID = config.get("Opencuts", "salon_id")
     REGIS_API_KEY = config.get("Opencuts", "regis_api_key")
-    MY_SERVICE = config.get("Opencuts", "my_service")
-    MY_STYLIST = config.get("Opencuts", "my_stylist")
+    MY_SERVICE = config.get("Preferences", "my_service")
+    MY_STYLIST = config.get("Preferences", "my_stylist")
 
     # Instantiate the class and get some information about the salon
     myStore = opencuts.Salon(SALON_ID, REGIS_API_KEY)

@@ -1,0 +1,17 @@
+[Opencuts]
+#Required
+salon_id = 12345
+#Required
+regis_api_key = abc123
+#Required
+regis_booking_api_key = abc123
+
+[Preferences]
+#All fields optional, will prompt for any missing fields.
+email = Edward.Scissorhands@gmail.com
+first_name = Edward 
+last_name = Scissorhands
+phone_number = 5558675309
+my_service = Supercut
+#If no stylist selected - It will default to "Next Available"
+my_stylist = Sweeney

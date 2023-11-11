@@ -13,7 +13,7 @@ import requests
         - Get available time slots for combination of stylist and service
         - schedule appointment (reserve slot)
         #TODO - search for a user
-        #TODO - create a user
+        #TODO - create a user (if needed)
         #TODO - cancel appointment for user
         #TODO - see upcoming appointments for user
         #TODO - Support for all pos_types
@@ -248,6 +248,6 @@ class Salon:
 
     # cancel appointsments for user
 
-    # check for a user account
+    # check for a user account existing
 
     # create a user account
