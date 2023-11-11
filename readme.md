@@ -5,11 +5,11 @@
 ## Disclaimer  ✂
 
 ```
-This project relies on private API's hosted by the Regis Corporation, Zentoi, and Greatclips for core functionailty. This project is not endorsed or afflitead with those companies in any way. This is a private project not related to my {dayjob} and a completley independent work. 
+This project relies on private API's hosted by the Regis Corporation, Zenoti, and Greatclips for core functionality. This project is not endorsed or affiliated with those companies in any way. This is a private project not related to my {dayjob} and a completely independent work. 
 
-This is meant to be a light hearted attempt at solving a "first-world problem" (Automation of scheduling a hair cut) with Python for fun and learning. This is not meant to interfer with, replace, or degrade the services of any of the parent companies. Please do not use this library in a malicious way.  
+This is meant to be a light hearted attempt at solving a "first-world problem" (Automation of scheduling a hair cut) with Python for fun and learning. This is not meant to interfere with, replace, or degrade the services of any of the parent companies. Please do not use this library in a malicious way.  
 
-This library can break at any time, as the companies can change the way their API functions, revoke the keys, or otherwise restrict the scope of programatically interacting with their salons.
+This library can break at any time, as the companies can change the way their API functions, revoke the keys, or otherwise restrict the scope of programmatically interacting with their salons.
 ```
 
 ## Currently Supported Salons 💈
@@ -35,16 +35,16 @@ This library can break at any time, as the companies can change the way their AP
 - Check available time slots for a combination of stylist and service.
 - Schedule appointments.
 - **TODO**: Cancel appointments.
-- **TODO**: User account management
+- **TODO**: User account management (Create/Delete Account)
 - **TODO**: View upcoming appointments for a user.
 - **TODO**: Extend support for all Regis salons
 
 ## Installation
 
-To install the library, clone this repository and include it in your project.
+Install the Library with `pip`
 
 ```bash
-git clone https://github.com/nshores/openCuts.git
+pip install opencuts
 ```
 
 ## Configuration
@@ -55,7 +55,7 @@ You need to copy and fill out the `config-example` file to `config.ini` with
 - The `api-booking.regis.com` API key obtained from their website
 - Your local `Salon_ID`
 
-The rest of the fields are optional but should be filled out if you want to use this non-interactivly.
+The rest of the fields are optional but should be filled out if you want to use this non-interactively (In a script).
 
 ```
 [Opencuts]
@@ -77,7 +77,7 @@ my_service = Supercut
 my_stylist = Sweeney
 ```
 
-## Usage
+## Library Example Usage
 
 To use the library, you will need an API key and salon ID. Here's a quick example to get you started:
 
@@ -103,7 +103,6 @@ selected_service = myStore.find_service_by_name(MY_SERVICE)
 booking_id = myStore.create_service_booking(selected_service, selected_stylist)
 booking_slots = myStore.get_booking_slot(booking_id)
 
-
 # Show Store Services
 print("\nStore Services:\n")
 for service in myStore.store_services:
@@ -112,6 +111,16 @@ for service in myStore.store_services:
 print("Store Therapists")
 for therapist in myStore.therapists:
     print(f"Therapist Name: {therapist['personal_info']['name']}, ID: {therapist['id']}\n")
+```
+
+## Super-Cuts CLI
+
+`supercuts-cli` is a full fledged program meant to interactively and non-interactively create and manage user bookings at a Supercuts or other regis location.  
+  
+Usage:
+
+```
+python supercuts-cli.py
 ```
 
 ## Contribution
