@@ -200,11 +200,12 @@ def main_menu():
                     print(
                         f"Service Name: {service['catalog_info']['display_name']}, ID: {service['id']}\n"
                     )
-            for category in mySalon.store_services:
-                print(f"Category: {category['category']}\n")
-                for service in category["services"]:
-                    print("  Service ID:", service["id"])
-                    print("  Service Name:", service["service"])
+            else:
+                for category in mySalon.store_services:
+                    print(f"Category: {category['category']}\n")
+                    for service in category["services"]:
+                        print("  Service ID:", service["id"])
+                        print("  Service Name:", service["service"])
             input("Press any key to continue")
 
         elif choice == "5":
@@ -215,8 +216,9 @@ def main_menu():
                     print(
                         f"Stylist Name: {therapist['personal_info']['name']}, ID: {therapist['id']}\n"
                     )
-            for therapist in mySalon.therapists:
-                print(f"Stylist Name: {therapist['name']}\n")
+            else:
+                for therapist in mySalon.therapists:
+                    print(f"Stylist Name: {therapist['name']}\n")
             input("Press any key to continue")
 
         elif choice == "6":
