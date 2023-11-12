@@ -42,7 +42,7 @@ def clear_screen():
 
 
 # Our menu function and logic for each action
-def main_menu(salon_instance):
+def main_menu():
     while True:
         clear_screen()
         print("\nMain Menu:")
@@ -57,14 +57,14 @@ def main_menu(salon_instance):
 
         if choice == "1":
             # look up the ID for the stylist and service
-            selected_stylist = myStore.find_stylist_by_name(MY_STYLIST)
-            selected_service = myStore.find_service_by_name(MY_SERVICE)
+            selected_stylist = mySalon.find_stylist_by_name(MY_STYLIST)
+            selected_service = mySalon.find_service_by_name(MY_SERVICE)
 
             # get some booking slots for the stylist and service selected
-            booking_id = myStore.create_service_booking(
+            booking_id = mySalon.create_service_booking(
                 selected_service, selected_stylist
             )
-            booking_slots = myStore.get_booking_slot(booking_id)
+            booking_slots = mySalon.get_booking_slot(booking_id)
             # Present and select a slot if there are any slots available
             # Perhaps move this to a method
             if len(booking_slots) > 0:
@@ -86,7 +86,7 @@ def main_menu(salon_instance):
                 # TODO - Refactor this to a method
                 print("Looking up account information")
                 try:
-                    account_id = myStore.retrive_guest_detail(
+                    account_id = mySalon.retrive_guest_detail(
                         first_name=FIRST_NAME, last_name=LAST_NAME, phone=PHONE_NUMBER
                     )
                     account_id = account_id["id"]
@@ -95,27 +95,27 @@ def main_menu(salon_instance):
                 # Flow to handle creating an account if none exists
                 if not account_id:
                     print("You neeed to make an account - Creating one")
-                    account_id = myStore.create_account(
+                    account_id = mySalon.create_account(
                         first_name=FIRST_NAME,
                         last_name=LAST_NAME,
                         phone_number=PHONE_NUMBER,
                     )
                     account_id = account_id["id"]
                 # Get another unique booking_ID passing in the user information this time
-                booking_id = myStore.create_service_booking(
+                booking_id = mySalon.create_service_booking(
                     selected_service, selected_stylist, account_id
                 )
                 # Logic to actually reserve and confirm your slot
                 if not DRY_RUN:
                     print("Reserving slot")
                     try:
-                        myStore.reserve_selected_slot(selected_slot, booking_id)
+                        mySalon.reserve_selected_slot(selected_slot, booking_id)
                     except:
                         print("Could not reserve slot")
                         sys.exit()
                     print("Confirming Slot")
                     try:
-                        myStore.confirm_selected_slot(booking_id)
+                        mySalon.confirm_selected_slot(booking_id)
                     except:
                         print("Could not confirm slot")
             input("Press any key to continue")
@@ -123,7 +123,7 @@ def main_menu(salon_instance):
             # TODO - Refactor this to a method
             print("Looking up account information")
             try:
-                account_id = myStore.retrive_guest_detail(
+                account_id = mySalon.retrive_guest_detail(
                     first_name=FIRST_NAME, last_name=LAST_NAME, phone=PHONE_NUMBER
                 )
                 account_id = account_id["id"]
@@ -132,13 +132,13 @@ def main_menu(salon_instance):
             # Flow to handle creating an account if none exists
             if not account_id:
                 print("You neeed to make an account - Creating one")
-                account_id = myStore.create_account(
+                account_id = mySalon.create_account(
                     first_name=FIRST_NAME,
                     last_name=LAST_NAME,
                     phone_number=PHONE_NUMBER,
                 )
                 account_id = account_id["id"]
-            appointments = myStore.get_appointments(account_id)
+            appointments = mySalon.get_appointments(account_id)
             if not appointments:
                 print("No Appointments today")
             else:
@@ -149,7 +149,7 @@ def main_menu(salon_instance):
             # TODO - Make this call a method.
             print("Looking up account information")
             try:
-                account_id = myStore.retrive_guest_detail(
+                account_id = mySalon.retrive_guest_detail(
                     first_name=FIRST_NAME, last_name=LAST_NAME, phone=PHONE_NUMBER
                 )
                 account_id = account_id["id"]
@@ -158,13 +158,13 @@ def main_menu(salon_instance):
             # Flow to handle creating an account if none exists
             if not account_id:
                 print("You neeed to make an account - Creating one")
-                account_id = myStore.create_account(
+                account_id = mySalon.create_account(
                     first_name=FIRST_NAME,
                     last_name=LAST_NAME,
                     phone_number=PHONE_NUMBER,
                 )
                 account_id = account_id["id"]
-            appointments = myStore.get_appointments(account_id)
+            appointments = mySalon.get_appointments(account_id)
             print(appointments)
             if len(appointments) > 0:
                 print("Appointment List:")
@@ -183,14 +183,14 @@ def main_menu(salon_instance):
                     + selected_appointment["appointment_services"]["start_time"]
                 )
                 print("Cancelling Appointment")
-                myStore.cancel_appointment(selected_appointment["invoice_id"])
+                mySalon.cancel_appointment(selected_appointment["invoice_id"])
             else:
                 print("No Appointments found")
                 input("Press any key to continue")
 
         elif choice == "4":
             print("\nStore Services:\n")
-            for service in myStore.store_services:
+            for service in mySalon.store_services:
                 print(
                     f"Service Name: {service['catalog_info']['display_name']}, ID: {service['id']}\n"
                 )
@@ -198,7 +198,7 @@ def main_menu(salon_instance):
 
         elif choice == "5":
             print("Store Stylists")
-            for therapist in myStore.therapists:
+            for therapist in mySalon.therapists:
                 print(
                     f"Therapist Name: {therapist['personal_info']['name']}, ID: {therapist['id']}\n"
                 )
@@ -212,12 +212,12 @@ def main_menu(salon_instance):
 
 if __name__ == "__main__":
     # Instantiate the class and get some information about the salon
-    myStore = opencuts.Salon(SALON_ID, REGIS_API_KEY)
-    myStore.get_salon()  # get salon information
-    myStore.get_salon_services()  # get all the services the salon offers
-    myStore.get_therapists_working()  # get the stylist information
-    # start the menu mainu and pass in our store object
-    main_menu(myStore)
+    mySalon = opencuts.Salon(SALON_ID, REGIS_API_KEY)
+    mySalon.get_salon()  # get salon information
+    mySalon.get_salon_services()  # get all the services the salon offers
+    mySalon.get_therapists_working()  # get the stylist information
+    # start the menu mainu
+    main_menu()
 
 
 # DEBUG
