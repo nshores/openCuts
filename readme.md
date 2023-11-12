@@ -32,9 +32,9 @@ This library can break at any time, as the companies can change the way their AP
 - List people scheduled at the salon.
 - Check available time slots for a combination of stylist and service.
 - Schedule appointments.
-- **TODO**: Cancel appointments.
+- Cancel appointments.
 - User account management (Create/Delete Account)
-- **TODO**: View upcoming appointments for a user.
+- View upcoming appointments for a user.
 - **TODO**: Extend support for all Regis salons
 
 ## Installation
