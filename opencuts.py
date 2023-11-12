@@ -355,7 +355,7 @@ class Salon:
         logging.info(f"Cancelling Appointment")
         request_url = self.zenoti_api_url + f"invoices/{invoice_id}/cancel"
         try:
-            response = requests.put(request_url, headers=headers, payload=payload)
+            response = requests.put(request_url, headers=headers, json=payload)
             response = response.json()
             return response
         except Exception as error:
