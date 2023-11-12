@@ -33,7 +33,7 @@ This library can break at any time, as the companies can change the way their AP
 - Check available time slots for a combination of stylist and service.
 - Schedule appointments.
 - **TODO**: Cancel appointments.
-- **TODO**: User account management (Create/Delete Account)
+- User account management (Create/Delete Account)
 - **TODO**: View upcoming appointments for a user.
 - **TODO**: Extend support for all Regis salons
 
