@@ -48,6 +48,15 @@ ZENOTI_API_URL = "https://api.zenoti.com/v1/"
 
 class Salon:
     def __init__(self, salon_id, regis_api_key):
+        """
+        Initialize a new Salon instance with specific salon ID and Regis API key.
+
+        Args:
+            salon_id (str): The unique identifier for a specific salon.
+            regis_api_key (str): API key used for authorization with Regis properties' services.
+
+        This method initializes the Salon instance with the provided salon ID and Regis API key. It also sets default values for various instance properties such as API URLs, store ID, POS type, available services, and the current date.
+        """
         self.salon_id = salon_id
         self.regis_api_key = regis_api_key
         self.base_regis_api_url = BASE_REGIS_API_URL
@@ -59,6 +68,14 @@ class Salon:
         self.therapists = []
 
     def get_salon(self):
+        """
+        Retrieve salon information using its unique identifier and set essential details.
+
+        This method makes an API request to retrieve salon information, including the Zenoti API key, store ID, and POS type, using the salon's unique identifier.
+
+        Returns:
+            tuple: A tuple containing the Zenoti API key, store ID, and POS type if the request is successful, otherwise None.
+        """
         headers = {
             "Authorization": self.regis_api_key,
         }
@@ -76,6 +93,14 @@ class Salon:
         return self.zenoti_api_key, self.store_id, self.pos_type
 
     def get_salon_services(self):
+        """
+        Retrieve salon information using its unique identifier and set essential details.
+
+        This method makes an API request to retrieve salon information, including the Zenoti API key, store ID, and POS type, using the salon's unique identifier.
+
+        Returns:
+            tuple: A tuple containing the Zenoti API key, store ID, and POS type if the request is successful, otherwise None.
+        """
         headers = {
             "Authorization": "apikey " + self.zenoti_api_key,
         }
@@ -133,7 +158,7 @@ class Salon:
 
     def find_stylist_by_name(self, stylist_name):
         for stylist in self.therapists:
-            if stylist["personal_info"]["name"].lower() == stylist_name.lower():
+            if stylist["personal_info"]["first_name"].lower() == stylist_name.lower():
                 return stylist
         return None  # If no stylist found with that name
 
@@ -144,7 +169,7 @@ class Salon:
         return None  # If no stylist found with that name
 
     # https://docs.zenoti.com/reference/create-a-service-booking
-    def create_service_booking(self, service, stylist):
+    def create_service_booking(self, service, stylist, guest_id=None):
         """This method expects a service and stylist object.
         It will return a unique service ID that can be passed to get_booking_slot
         to get an object containing available booking slots for the combination of an service, stylist, and location.
@@ -164,9 +189,8 @@ class Salon:
             "center_id": self.store_id,
             "guests": [
                 {
-                    # Hard coded to nick shores guest ID right now
-                    # need to handle looking up an existing guest, or creating a new one
-                    "id": "b216878c-727a-4c77-a2e8-6d899855952c",
+                    # Guest ID should be set when ready to mark a reservation.
+                    "id": guest_id,
                     "items": [
                         {
                             "item": {"id": service["id"]},
@@ -244,10 +268,67 @@ class Salon:
             return None
         return response
 
-    # check for a user account existing
+    # retrive guest details to get a guest ID or create a new one
+    # https://docs.zenoti.com/reference/search-for-a-guest
+    def retrive_guest_detail(self, first_name=None, last_name=None, phone=None):
+        params = {
+            "center_id": self.store_id,
+            "first_name": first_name,
+            "last_name": last_name,
+            "phone": phone,
+        }
+        headers = {
+            "Authorization": "apikey " + self.zenoti_api_key,
+        }
+        logging.info(f"Retriving Guest Detail")
+        request_url = self.zenoti_api_url + f"guests/search"
+        try:
+            response = requests.get(request_url, headers=headers, params=params)
+            guest = response.json()
+            if len(guest["guests"]) < 1:
+                print("No guest records returned")
+                return {}
+            return guest["guests"][
+                -1
+            ]  # Sometimes guests have multiple records so just return the latest one
+        except Exception as error:
+            logging.error("Error Getting Guest Detail %s", error)
+            return None
 
     # Create a user account
+    def create_account(self, first_name, last_name, phone_number):
+        headers = {
+            "Authorization": "apikey " + self.zenoti_api_key,
+        }
+        payload = {
+            "center_id": self.store_id,
+            "personal_info": {
+                "first_name": first_name,
+                "last_name": last_name,
+                "mobile_phone": {
+                    "country_code": 225,  # America
+                    "number": phone_number,
+                },
+                "email": "",
+                "gender": -1,
+            },
+            "preferences": {
+                "receive_transactional_email": True,  # Get upadtes about your appointment via email
+                "receive_transactional_sms": True,  # Get upadtes about your appointment via sms
+                "receive_marketing_email": False,  # Don't spam me
+                "receive_marketing_sms": False,  # more spam
+            },
+        }
+        request_url = self.zenoti_api_url + f"guests"
+        logging.info("Trying to Create an account")
+        try:
+            response = requests.post(request_url, json=payload, headers=headers)
+            account = response.json()
+        except Exception as error:
+            logging.error("Creating Account %s", error)
+            return None
+        return account
 
-    # Check Appointments for user
+    # Check appointments for user
 
     # cancel appointsments for user

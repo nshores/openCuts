@@ -8,6 +8,7 @@ from pprint import *
 """
 
 if __name__ == "__main__":
+    DRY_RUN = True
     if not os.path.exists("config.ini"):
         print("Error: The config file does not exist.")
         sys.exit(1)
@@ -21,6 +22,14 @@ if __name__ == "__main__":
     REGIS_API_KEY = config.get("Opencuts", "regis_api_key")
     MY_SERVICE = config.get("Preferences", "my_service")
     MY_STYLIST = config.get("Preferences", "my_stylist")
+    FIRST_NAME = config.get("Preferences", "first_name")
+    LAST_NAME = config.get("Preferences", "last_name")
+    PHONE_NUMBER = config.get("Preferences", "phone_number")
+    print(
+        "My SALON_ID:" + SALON_ID + "\n"
+        "MY_SERVICE:" + MY_SERVICE + "\n"
+        "MY_STYLIST:" + MY_STYLIST + "\n"
+    )
 
     # Instantiate the class and get some information about the salon
     myStore = opencuts.Salon(SALON_ID, REGIS_API_KEY)
@@ -47,17 +56,40 @@ if __name__ == "__main__":
             # Directly use the input number as the index
             selected_slot = booking_slots["slots"][selected_slot_num]
         print("Selected Slot: " + selected_slot["Time"])
-        print("Reserving slot")
+        print("Looking up account information")
         try:
-            myStore.reserve_selected_slot(selected_slot, booking_id)
+            account_id = myStore.retrive_guest_detail(
+                first_name=FIRST_NAME, last_name=LAST_NAME, phone=PHONE_NUMBER
+            )
+            account_id = account_id["id"]
         except:
-            print("Could not reserve slot")
-            sys.exit()
-        print("Confirming Slot")
-        try:
-            myStore.confirm_selected_slot(booking_id)
-        except:
-            print("Could not confirm slot")
+            print("Coud not look up account information")
+        # Flow to handle creating an account if none exists
+        if not account_id:
+            print("You neeed to make an account - Creating one")
+            account_id = myStore.create_account(
+                first_name=FIRST_NAME, last_name=LAST_NAME, phone_number=PHONE_NUMBER
+            )
+            account_id = account_id["id"]
+        print("Account Info:")
+        print(account_id)
+        # Get another unique booking_ID passing in the user information this time
+        booking_id = myStore.create_service_booking(
+            selected_service, selected_stylist, account_id
+        )
+        # Logic to actually reserve and confirm your slot
+        if not DRY_RUN:
+            print("Reserving slot")
+            try:
+                myStore.reserve_selected_slot(selected_slot, booking_id)
+            except:
+                print("Could not reserve slot")
+                sys.exit()
+            print("Confirming Slot")
+            try:
+                myStore.confirm_selected_slot(booking_id)
+            except:
+                print("Could not confirm slot")
 
 
 ##DEBUG
