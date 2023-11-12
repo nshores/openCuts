@@ -1,7 +1,6 @@
 import logging
 import sys
 from datetime import datetime
-
 import requests
 
 """ openCuts - an opensource library for interacting with Regis Properties Salons. Currentley supports Supercuts but in the future will support other Regis properties that use the same API's. 
@@ -14,23 +13,13 @@ import requests
         - schedule appointment (reserve slot)
         - search for a user
         - create a user
-        #TODO - cancel appointment for user
+        - cancel appointment for user
         - see upcoming appointments for user
         #TODO - Support for all pos_types
 
 
 
 """
-
-# # Flow to create a booking
-# 1. Search for your Salon and get the salonID (Manual) and
-# 2. Pass the salonID to https: //api.regiscorp.com/sis/api/salon?salon-number={salonID}.
-# 3. Take your API key (zenoati_api_key) and {zenoti_ID} (Unique Salon Identifier) and get information about the salon services https: //api.zenoti.com/v1/centers/{zeonti_ID}/services?catalog_enabled=true&expand=additional_info&expand=catalog_info&size=100&0=us . Use this to get your {service_id}
-# 4. Get the therapists working at the salon - https: //api.zenoti.com/v1/centers/{zenoti_id}/therapists?date=2023-11-06&0=us
-# 5. Take your {zenoti_ID}, {therapist_id}, {service_id} and a unique identiifer and POST this to https: //api.zenoti.com/v1/bookings?0=us . This returns a unique {slot_id }for the combination of the service and therapist.
-# 6. Take your {booking_id} and GET  https: //api.zenoti.com/v1/bookings/{slot_id}/slots?0=us
-# 7. Available slots for the therapist and service combination will be returned.
-# 8. POST a slot to reserve a booking.
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
 )
@@ -356,5 +345,21 @@ class Salon:
             return None
 
     # cancel appointsments for user
+    def cancel_appointment(self, invoice_id):
+        headers = {
+            "Authorization": "apikey " + self.zenoti_api_key,
+        }
+        payload = {
+            "comments": "Cannot Attend",
+        }
+        logging.info(f"Cancelling Appointment")
+        request_url = self.zenoti_api_url + f"invoices/{invoice_id}/cancel"
+        try:
+            response = requests.put(request_url, headers=headers, payload=payload)
+            response = response.json()
+            return response
+        except Exception as error:
+            logging.error("Error Cancelling Appointment %s", error)
+            return None
 
     # implement get_or_create_account

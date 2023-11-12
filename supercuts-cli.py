@@ -2,7 +2,6 @@ import configparser
 import opencuts
 import os
 import sys
-from pprint import *
 
 """ A CLI for Supercuts.
 """
@@ -67,6 +66,7 @@ def main_menu(salon_instance):
             )
             booking_slots = myStore.get_booking_slot(booking_id)
             # Present and select a slot if there are any slots available
+            # Perhaps move this to a method
             if len(booking_slots) > 0:
                 print(
                     "\n--------------------\n",
@@ -140,11 +140,54 @@ def main_menu(salon_instance):
                 account_id = account_id["id"]
             appointments = myStore.get_appointments(account_id)
             if not appointments:
-                print("No appointments today")
+                print("No Appointments today")
             else:
                 print("Your Appointments Today:")
                 print(appointments)
             input("Press any key to continue")
+        elif choice == "3":
+            # TODO - Make this call a method.
+            print("Looking up account information")
+            try:
+                account_id = myStore.retrive_guest_detail(
+                    first_name=FIRST_NAME, last_name=LAST_NAME, phone=PHONE_NUMBER
+                )
+                account_id = account_id["id"]
+            except:
+                print("Coud not look up account information")
+            # Flow to handle creating an account if none exists
+            if not account_id:
+                print("You neeed to make an account - Creating one")
+                account_id = myStore.create_account(
+                    first_name=FIRST_NAME,
+                    last_name=LAST_NAME,
+                    phone_number=PHONE_NUMBER,
+                )
+                account_id = account_id["id"]
+            appointments = myStore.get_appointments(account_id)
+            print(appointments)
+            if len(appointments) > 0:
+                print("Appointment List:")
+                # Using enumerate with its default start value (0)
+                for slot_num, ap in enumerate(appointments):
+                    print(
+                        f"Slot Num {slot_num} - Time Slot {ap['appointment_services']['start_time']} \n"
+                    )
+                selected_slot = None
+                while selected_slot is None:
+                    selected_slot_num = int(input("Select Slot:"))
+                    # Directly use the input number as the index
+                    selected_appointment = appointments[selected_slot_num]
+                print(
+                    "Selected Appointment: "
+                    + selected_appointment["appointment_services"]["start_time"]
+                )
+                print("Cancelling Appointment")
+                myStore.cancel_appointment(selected_appointment["invoice_id"])
+            else:
+                print("No Appointments found")
+                input("Press any key to continue")
+
         elif choice == "4":
             print("\nStore Services:\n")
             for service in myStore.store_services:
