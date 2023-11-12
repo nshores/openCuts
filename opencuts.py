@@ -348,7 +348,7 @@ class Salon:
             response = requests.get(request_url, headers=headers, params=params)
             appointments = response.json()
             if len(appointments["appointments"]) < 1:
-                print("No guest appointments returned")
+                # print("No guest appointments returned")
                 return {}
             return appointments["appointments"]
         except Exception as error:
@@ -356,3 +356,5 @@ class Salon:
             return None
 
     # cancel appointsments for user
+
+    # implement get_or_create_account

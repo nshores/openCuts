@@ -33,16 +33,28 @@ print(
 )
 
 
-# Our menu function
+def clear_screen():
+    # For Windows
+    if os.name == "nt":
+        _ = os.system("cls")
+    # For macOS and Linux
+    else:
+        _ = os.system("clear")
+
+
+# Our menu function and logic for each action
 def main_menu(salon_instance):
     while True:
+        clear_screen()
         print("\nMain Menu:")
         print("1. Book an Appointment")
         print("2. View My Appointments")
         print("3. Cancel Appointment")
-        print("4. Exit")
+        print("4. View Store Services")
+        print("5. View Store Stylists")
+        print("6. Exit")
 
-        choice = input("Enter your choice (1-3): ")
+        choice = input("Enter your choice (1-6): ")
 
         if choice == "1":
             # look up the ID for the stylist and service
@@ -71,6 +83,7 @@ def main_menu(salon_instance):
                     selected_slot = booking_slots["slots"][selected_slot_num]
                 print("Selected Slot: " + selected_slot["Time"])
                 # If you select a slot, continue the rest of the booking flow
+                # TODO - Refactor this to a method
                 print("Looking up account information")
                 try:
                     account_id = myStore.retrive_guest_detail(
@@ -105,9 +118,9 @@ def main_menu(salon_instance):
                         myStore.confirm_selected_slot(booking_id)
                     except:
                         print("Could not confirm slot")
+            input("Press any key to continue")
         elif choice == "2":
-            print("todo")
-            print("Your Appointments Today:")
+            # TODO - Refactor this to a method
             print("Looking up account information")
             try:
                 account_id = myStore.retrive_guest_detail(
@@ -126,8 +139,28 @@ def main_menu(salon_instance):
                 )
                 account_id = account_id["id"]
             appointments = myStore.get_appointments(account_id)
-            print(appointments)
+            if not appointments:
+                print("No appointments today")
+            else:
+                print("Your Appointments Today:")
+                print(appointments)
+            input("Press any key to continue")
         elif choice == "4":
+            print("\nStore Services:\n")
+            for service in myStore.store_services:
+                print(
+                    f"Service Name: {service['catalog_info']['display_name']}, ID: {service['id']}\n"
+                )
+            input("Press any key to continue")
+
+        elif choice == "5":
+            print("Store Stylists")
+            for therapist in myStore.therapists:
+                print(
+                    f"Therapist Name: {therapist['personal_info']['name']}, ID: {therapist['id']}\n"
+                )
+            input("Press any key to continue")
+        elif choice == "6":
             print("Exiting program.")
             break
         else:
@@ -144,26 +177,14 @@ if __name__ == "__main__":
     main_menu(myStore)
 
 
-##DEBUG
-# # Show Store Information
+# DEBUG
+# Show Store Information
 # print(
 #     "Store ID:" + myStore.store_id,
 #     "\n" + "Zentoi_API_Key:" + myStore.zenoti_api_key,
 #     "\n" + "POS_TYPE:" + myStore.pos_type,
 # )
-# # Show Store Services
-# print("\nStore Services:\n")
-# for service in myStore.store_services:
-#     print(
-#         f"Service Name: {service['catalog_info']['display_name']}, ID: {service['id']}\n"
-#     )
-# # Show Store Therapists
-# print("Store Therapists")
-# for therapist in myStore.therapists:
-#     print(
-#         f"Therapist Name: {therapist['personal_info']['name']}, ID: {therapist['id']}\n"
-#     )
-# # Check attendance
+# Check attendance
 # working = []
 # for therapist in myStore.therapists:
 #     name = therapist["personal_info"]["name"]
