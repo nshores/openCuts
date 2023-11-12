@@ -28,15 +28,16 @@ POS_TYPES = [
     "Zenoti",
     "Supersalon",
     "opensalonpro",
-]  # Only Zenoti supported for now. Other POS_TYPES require calling api-booking.regiscorp.com instead of zentoi directly (good)
+]  # Only Zenoti supported for now. Other POS_TYPES require calling api-booking.regiscorp.com instead of zentoi directly
 
 
 BASE_REGIS_API_URL = "https://api.regiscorp.com"
+BASE_REGIS_BOOKING_API_URL = "https://api-booking.regiscorp.com/v1/"
 ZENOTI_API_URL = "https://api.zenoti.com/v1/"
 
 
 class Salon:
-    def __init__(self, salon_id, regis_api_key):
+    def __init__(self, salon_id, regis_api_key, regis_boking_api_key):
         """
         Initialize a new Salon instance with specific salon ID and Regis API key.
 
@@ -48,7 +49,9 @@ class Salon:
         """
         self.salon_id = salon_id
         self.regis_api_key = regis_api_key
+        self.regis_api_booking_key = regis_boking_api_key
         self.base_regis_api_url = BASE_REGIS_API_URL
+        self.base_regis_booking_api_url = BASE_REGIS_BOOKING_API_URL
         self.zenoti_api_url = ZENOTI_API_URL
         self.store_id = None
         self.pos_type = None
@@ -90,34 +93,65 @@ class Salon:
         Returns:
             tuple: A tuple containing the Zenoti API key, store ID, and POS type if the request is successful, otherwise None.
         """
+        if self.pos_type.lower() == "zenoti":
+            headers = {
+                "Authorization": "apikey " + self.zenoti_api_key,
+            }
+            logging.info("Getting Salon Services")
+            request_url = (
+                self.zenoti_api_url
+                + f"centers/{self.store_id}/services?catalog_enabled=true&expand=additional_info&expand=catalog_info&size=100&0=us"
+            )
+            try:
+                response = requests.get(request_url, headers=headers)
+                self.store_services = response.json().get("services", None)
+            except Exception as error:
+                logging.error("Error Geting Store Services %s", error)
+                return None
+            return self.store_services
+        # Handle a non-zenoti type store
         headers = {
-            "Authorization": "apikey " + self.zenoti_api_key,
+            "x-api-key": self.regis_api_booking_key,
         }
+        payload = {"salonId": self.salon_id, "siteId": 1}
         logging.info("Getting Salon Services")
-        request_url = (
-            self.zenoti_api_url
-            + f"centers/{self.store_id}/services?catalog_enabled=true&expand=additional_info&expand=catalog_info&size=100&0=us"
-        )
+        request_url = self.base_regis_booking_api_url + f"getsalondetails"
         try:
-            response = requests.get(request_url, headers=headers)
-            self.store_services = response.json().get("services", None)
+            response = requests.post(request_url, json=payload, headers=headers)
+            self.store_services = response.json().get("Services", None)
         except Exception as error:
             logging.error("Error Geting Store Services %s", error)
             return None
         return self.store_services
 
     def get_therapists_working(self):
-        params = {"date": self.today_date}
+        if self.pos_type.lower() == "zenoti":
+            params = {"date": self.today_date}
+            headers = {
+                "Authorization": "apikey " + self.zenoti_api_key,
+            }
+            logging.info("Getting Salon Therapists")
+            request_url = self.zenoti_api_url + f"centers/{self.store_id}/therapists"
+            try:
+                response = requests.get(request_url, headers=headers, params=params)
+                self.therapists = response.json().get("therapists", None)
+            except Exception as error:
+                logging.error("Error Geting Store therapists %s", error)
+                return None
+            return self.therapists
+        # Handle a non-zenoti type store
         headers = {
-            "Authorization": "apikey " + self.zenoti_api_key,
+            "x-api-key": self.regis_api_booking_key,
         }
-        logging.info("Getting Salon Therapists")
-        request_url = self.zenoti_api_url + f"centers/{self.store_id}/therapists"
+        payload = {"salonId": self.salon_id, "siteId": 1}
+        logging.info("Getting Salon Stylists")
+        request_url = self.base_regis_booking_api_url + f"getsalondetails"
         try:
-            response = requests.get(request_url, headers=headers, params=params)
-            self.therapists = response.json().get("therapists", None)
+            response = requests.post(request_url, json=payload, headers=headers)
+            self.therapists = response.json().get("Stylists", None)
+            print("Stylists:", self.therapists)
         except Exception as error:
-            logging.error("Error Geting Store therapists %s", error)
+            logging.error("Error Geting Store Stylists %s", error)
             return None
         return self.therapists
 

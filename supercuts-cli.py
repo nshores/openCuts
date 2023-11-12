@@ -15,21 +15,17 @@ if not os.path.exists("config.ini"):
 # Read the config
 config = configparser.ConfigParser()
 config.read("config.ini")
-print("openCuts is running! 💇\n")
+
 
 # Get values from the config file
 SALON_ID = config.get("Opencuts", "salon_id")
 REGIS_API_KEY = config.get("Opencuts", "regis_api_key")
+REGIS_API_BOOKING_KEY = config.get("Opencuts", "regis_booking_api_key")
 MY_SERVICE = config.get("Preferences", "my_service")
 MY_STYLIST = config.get("Preferences", "my_stylist")
 FIRST_NAME = config.get("Preferences", "first_name")
 LAST_NAME = config.get("Preferences", "last_name")
 PHONE_NUMBER = config.get("Preferences", "phone_number")
-print(
-    "My SALON_ID:" + SALON_ID + "\n"
-    "MY_SERVICE:" + MY_SERVICE + "\n"
-    "MY_STYLIST:" + MY_STYLIST + "\n"
-)
 
 
 def clear_screen():
@@ -45,7 +41,15 @@ def clear_screen():
 def main_menu():
     while True:
         clear_screen()
-        print("\nMain Menu:")
+        print("openCuts is running! 💇\n")
+        print("Salon Type:", mySalon.pos_type)
+        print(
+            "My SALON_ID:",
+            SALON_ID + "\n" "MY_SERVICE:",
+            MY_SERVICE + "\n" "MY_STYLIST:",
+            MY_STYLIST + "\n",
+        )
+        print("\nMain Menu:\n")
         print("1. Book an Appointment")
         print("2. View My Appointments")
         print("3. Cancel Appointment")
@@ -190,19 +194,31 @@ def main_menu():
 
         elif choice == "4":
             print("\nStore Services:\n")
-            for service in mySalon.store_services:
-                print(
-                    f"Service Name: {service['catalog_info']['display_name']}, ID: {service['id']}\n"
-                )
+            # TODO - Should I move this logic to the class?
+            if mySalon.pos_type.lower() == "zenoti":
+                for service in mySalon.store_services:
+                    print(
+                        f"Service Name: {service['catalog_info']['display_name']}, ID: {service['id']}\n"
+                    )
+            for category in mySalon.store_services:
+                print(f"Category: {category['category']}\n")
+                for service in category["services"]:
+                    print("  Service ID:", service["id"])
+                    print("  Service Name:", service["service"])
             input("Press any key to continue")
 
         elif choice == "5":
-            print("Store Stylists")
+            print("\nStore Stylists:\n")
+            # TODO - Should I move this logic to the class?
+            if mySalon.pos_type.lower() == "zenoti":
+                for therapist in mySalon.therapists:
+                    print(
+                        f"Stylist Name: {therapist['personal_info']['name']}, ID: {therapist['id']}\n"
+                    )
             for therapist in mySalon.therapists:
-                print(
-                    f"Therapist Name: {therapist['personal_info']['name']}, ID: {therapist['id']}\n"
-                )
+                print(f"Stylist Name: {therapist['name']}\n")
             input("Press any key to continue")
+
         elif choice == "6":
             print("Exiting program.")
             break
@@ -212,7 +228,7 @@ def main_menu():
 
 if __name__ == "__main__":
     # Instantiate the class and get some information about the salon
-    mySalon = opencuts.Salon(SALON_ID, REGIS_API_KEY)
+    mySalon = opencuts.Salon(SALON_ID, REGIS_API_KEY, REGIS_API_BOOKING_KEY)
     mySalon.get_salon()  # get salon information
     mySalon.get_salon_services()  # get all the services the salon offers
     mySalon.get_therapists_working()  # get the stylist information
