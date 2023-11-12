@@ -15,7 +15,7 @@ import requests
         - search for a user
         - create a user
         #TODO - cancel appointment for user
-        #TODO - see upcoming appointments for user
+        - see upcoming appointments for user
         #TODO - Support for all pos_types
 
 
@@ -219,7 +219,7 @@ class Salon:
         headers = {
             "Authorization": "apikey " + self.zenoti_api_key,
         }
-        logging.info(f"Getting Booking Slot with ${slot_id}")
+        logging.info(f"Getting Booking Slot")
         request_url = self.zenoti_api_url + f"bookings/{slot_id}/slots"
         try:
             response = requests.get(request_url, headers=headers)
@@ -330,5 +330,29 @@ class Salon:
         return account
 
     # Check appointments for user
+    def get_appointments(self, guest_id, start_date=None, end_date=None):
+        if start_date is None:
+            start_date = self.today_date
+        if end_date is None:
+            end_date = self.today_date
+        params = {
+            "start_date": start_date,
+            "end_date": end_date,
+        }
+        headers = {
+            "Authorization": "apikey " + self.zenoti_api_key,
+        }
+        logging.info(f"Retriving Guest Appointments")
+        request_url = self.zenoti_api_url + f"guests/{guest_id}/appointments"
+        try:
+            response = requests.get(request_url, headers=headers, params=params)
+            appointments = response.json()
+            if len(appointments["appointments"]) < 1:
+                print("No guest appointments returned")
+                return {}
+            return appointments["appointments"]
+        except Exception as error:
+            logging.error("Error Getting Guest Appointments %s", error)
+            return None
 
     # cancel appointsments for user
