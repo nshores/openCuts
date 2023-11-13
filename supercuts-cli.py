@@ -1,5 +1,5 @@
 import configparser
-import opencuts
+import opencuts.opencuts as opencuts
 import os
 import sys
 
