@@ -6,7 +6,7 @@ import uuid
 import os
 
 """ openCuts - an opensource library for interacting with Regis Properties Salons. Currentley supports Supercuts but in the future will support other Regis properties that use the same API's. 
-    - User is expected to include the regis_api_key, and salon_id
+    - User is expected to include the regis_api_key, regis_booking_api_key and salon_id
     - Features:
         - Get Salon Services
         - Get Therapists working at store at a specified date
@@ -17,10 +17,7 @@ import os
         - create a user
         - cancel appointment for user
         - see upcoming appointments for user
-         - Support for all pos_types
-
-
-
+        - Support for all regis pos_types
 """
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s - %(levelname)s - %(message)s"
@@ -97,6 +94,9 @@ class RegisSalon:
             self.zenoti_api_key = response.json().get("zenoti_api_key", None)
             self.store_id = response.json().get("zenoti_id", None)
             self.pos_type = response.json().get("pos_type", None)
+            self.storeaddress = response.json().get("address2", None)
+            self.storename = response.json().get("name", None)
+            self.storephone = response.json().get("phone_number", None)
         except Exception as error:
             logging.error("Error getting Zenoti API Key %s", error)
             return None

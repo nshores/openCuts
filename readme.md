@@ -35,7 +35,6 @@ This library can break at any time, as the companies can change the way their AP
 - Cancel appointments.
 - User account management (Create/Delete Account)
 - View upcoming appointments for a user.
-- **TODO**: Extend support for all Regis salons
 
 ## Installation
 
@@ -84,6 +83,7 @@ from opencuts import salon
 
 SALON_ID = 1234
 REGIS_API_KEY = abc123
+REGIS_API_BOOKING_KEY = abc123
 MY_STYLIST = 
 MY_SERVICE = Supercut
 
