@@ -71,7 +71,7 @@ def main_menu():
                 )
                 booking_slots = mySalon.get_booking_slot(booking_id)
                 # Present and select a slot if there are any slots available
-                # Perhaps move this to a method
+                # TODO Perhaps move this to a method
                 if len(booking_slots) > 0:
                     print(
                         "\n--------------------\n",
@@ -131,7 +131,26 @@ def main_menu():
                 print("Implement non zenoti checkin flow here")
                 selected_service = str(mySalon.find_service_by_name(MY_SERVICE))
                 booking_slots = mySalon.get_availability_of_salon(selected_service)
-                print(booking_slots)
+                # Present and select a slot if there are any slots available
+                # Perhaps move this to a method
+                if len(booking_slots) > 0:
+                    print(
+                        "\n--------------------\n",
+                        "Choose an open slot:",
+                        "\n--------------------\n",
+                    )
+                    # Using enumerate with its default start value (0)
+                    for slot_num, slot in enumerate(booking_slots):
+                        print(
+                            f"Slot Num {slot_num} - Name: {slot['name']} - Time Slot {slot['times']} Available\n"
+                        )
+                    selected_slot = None
+                    while selected_slot is None:
+                        selected_slot_num = int(input("Select Slot:"))
+                        # Directly use the input number as the index
+                        selected_slot = booking_slots[selected_slot_num]
+                    print("Selected Slot: ", selected_slot["times"])
+                    # If you select a slot, continue the rest of the booking flow
             input("Press any key to continue")
         elif choice == "2":
             # TODO - Refactor this to a method
@@ -204,7 +223,7 @@ def main_menu():
 
         elif choice == "4":
             print("\nStore Services:\n")
-            # TODO - Should I move this logic to the class?
+            # TODO -  move logic to a method
             if mySalon.pos_type.lower() == "zenoti":
                 for service in mySalon.store_services:
                     print(
@@ -220,7 +239,7 @@ def main_menu():
 
         elif choice == "5":
             print("\nStore Stylists:\n")
-            # TODO - Should I move this logic to the class?
+            # TODO - move logic to a method
             if mySalon.pos_type.lower() == "zenoti":
                 for therapist in mySalon.therapists:
                     print(

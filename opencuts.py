@@ -58,6 +58,9 @@ class Salon:
         self.store_services = None
         self.today_date = datetime.now().strftime("%Y-%m-%d")
         self.therapists = []
+        self.storeaddress = None
+        self.storename = None
+        self.storephone = None
 
     def get_salon(self):
         """
@@ -82,7 +85,27 @@ class Salon:
         except Exception as error:
             logging.error("Error getting Zenoti API Key %s", error)
             return None
-        return self.zenoti_api_key, self.store_id, self.pos_type
+        # Get some additonal info if this is a differnet POS system
+        if self.pos_type.lower() != "zenoti":
+            headers = {
+                "x-api-key": self.regis_api_booking_key,
+            }
+            payload = {
+                "salonId": self.salon_id,
+                "siteId": "1",
+            }
+            logging.info("Getting Store Details")
+            request_url = self.base_regis_booking_api_url + "getsalondetails"
+            try:
+                response = requests.post(request_url, headers=headers, json=payload)
+                response = response.json()
+                self.storeaddress = response["Salon"]["address"]
+                self.storename = response["Salon"]["name"]
+                self.storephone = response["Salon"]["phonenumber"]
+                self.storephone = self.storephone.replace("-", "")
+            except Exception as error:
+                logging.error("Error Store Details %s", error)
+                return None
 
     def get_salon_services(self):
         """
@@ -115,7 +138,7 @@ class Salon:
         }
         payload = {"salonId": self.salon_id, "siteId": 1}
         logging.info("Getting Salon Services")
-        request_url = self.base_regis_booking_api_url + f"getsalondetails"
+        request_url = self.base_regis_booking_api_url + "getsalondetails"
         try:
             response = requests.post(request_url, json=payload, headers=headers)
             self.store_services = response.json().get("Services", None)
@@ -145,7 +168,7 @@ class Salon:
         }
         payload = {"salonId": self.salon_id, "siteId": 1}
         logging.info("Getting Salon Stylists")
-        request_url = self.base_regis_booking_api_url + f"getsalondetails"
+        request_url = self.base_regis_booking_api_url + "getsalondetails"
         try:
             response = requests.post(request_url, json=payload, headers=headers)
             self.therapists = response.json().get("Stylists", None)
@@ -208,13 +231,6 @@ class Salon:
                 return None
         return None  # If no service found with that name
 
-    def find_service_id(data, service_name):
-        for category in data["Services"]:
-            for service in category["services"]:
-                if service["service"] == service_name:
-                    return service["id"]
-        return None
-
     # https://docs.zenoti.com/reference/create-a-service-booking
     def create_service_booking(self, service, stylist, guest_id=None):
         """This method expects a service and stylist object.
@@ -251,7 +267,7 @@ class Salon:
             ],
         }
         logging.info("Getting Service booking_id")
-        request_url = self.zenoti_api_url + f"bookings"
+        request_url = self.zenoti_api_url + "bookings"
         try:
             response = requests.post(request_url, json=payload, headers=headers)
             booking_id = response.json()
@@ -266,7 +282,7 @@ class Salon:
         headers = {
             "Authorization": "apikey " + self.zenoti_api_key,
         }
-        logging.info(f"Getting Booking Slot")
+        logging.info("Getting Booking Slot")
         request_url = self.zenoti_api_url + f"bookings/{slot_id}/slots"
         try:
             response = requests.get(request_url, headers=headers)
@@ -327,8 +343,8 @@ class Salon:
         headers = {
             "Authorization": "apikey " + self.zenoti_api_key,
         }
-        logging.info(f"Retriving Guest Detail")
-        request_url = self.zenoti_api_url + f"guests/search"
+        logging.info("Retriving Guest Detail")
+        request_url = self.zenoti_api_url + "guests/search"
         try:
             response = requests.get(request_url, headers=headers, params=params)
             guest = response.json()
@@ -366,7 +382,7 @@ class Salon:
                 "receive_marketing_sms": False,  # more spam
             },
         }
-        request_url = self.zenoti_api_url + f"guests"
+        request_url = self.zenoti_api_url + "guests"
         logging.info("Trying to Create an account")
         try:
             response = requests.post(request_url, json=payload, headers=headers)
@@ -389,7 +405,7 @@ class Salon:
         headers = {
             "Authorization": "apikey " + self.zenoti_api_key,
         }
-        logging.info(f"Retriving Guest Appointments")
+        logging.info("Retriving Guest Appointments")
         request_url = self.zenoti_api_url + f"guests/{guest_id}/appointments"
         try:
             response = requests.get(request_url, headers=headers, params=params)
@@ -410,7 +426,7 @@ class Salon:
         payload = {
             "comments": "Cannot Attend",
         }
-        logging.info(f"Cancelling Appointment")
+        logging.info("Cancelling Appointment")
         request_url = self.zenoti_api_url + f"invoices/{invoice_id}/cancel"
         try:
             response = requests.put(request_url, headers=headers, json=payload)
@@ -434,7 +450,7 @@ class Salon:
             "date": datetime.now().strftime("%Y%m%d"),
         }
         logging.info("Getting Salon Availability")
-        request_url = self.base_regis_booking_api_url + f"getavailabilityofsalon"
+        request_url = self.base_regis_booking_api_url + "getavailabilityofsalon"
         try:
             response = requests.post(request_url, json=payload, headers=headers)
             self.availability = response.json()
@@ -443,4 +459,51 @@ class Salon:
             return None
         return self.availability
 
-    # implement get_or_create_account
+    def add_check_in(
+        self,
+        firstname,
+        lastname,
+        phonenumber,
+        serviceid,
+        services,
+        stylistid,
+        stylistname,
+        time,
+        date,
+        emailaddress,
+    ):
+        headers = {
+            "x-api-key": self.regis_api_booking_key,
+        }
+        payload = {
+            "firstName": firstname,
+            "lastName": lastname,
+            "phoneNumber": self.storephone,
+            "salonId": self.salon_id,
+            "serviceId": serviceid,
+            "services": [
+                "Supercut",
+            ],
+            "siteId": "1",
+            "source": "SCWEB",
+            "sourceId": "SC-W-4a3cd4db-998e-444f-b6d0-1bf78d1114dc",
+            "storeAddress": self.storeaddress,
+            "storeName": self.storename,
+            "storePhone": self.storephone,
+            "stylistId": "30",
+            "stylistName": "Cora",
+            "time": "1130",
+            "date": datetime.now().strftime("%Y%m%d"),
+            "profileId": None,
+            "emailAddress": "JohnBGarrett@teleworm.us",
+            "gender": 0,
+        }
+        logging.info("Checking in")
+        request_url = self.base_regis_booking_api_url + "addcheckin"
+        try:
+            response = requests.post(request_url, json=payload, headers=headers)
+            self.checkin = response.json()
+        except Exception as error:
+            logging.error("Error Checking in %s", error)
+            return None
+        return self.checkin
