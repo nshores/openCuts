@@ -500,31 +500,34 @@ class Salon:
             "firstName": firstname,
             "lastName": lastname,
             "phoneNumber": phonenumber,
-            "salonId": self.salon_id,
+            "salonId": int(self.salon_id),
             "serviceId": serviceid,
-            "services": [
-                "Supercut",
-            ],
+            "services": services,
             "siteId": "1",
             "source": "SCWEB",
             "sourceId": "SC-W-4a3cd4db-998e-444f-b6d0-1bf78d1114dc",
             "storeAddress": self.storeaddress,
             "storeName": self.storename,
             "storePhone": self.storephone,
-            "stylistId": stylistid,
+            "stylistId": str(stylistid),
             "stylistName": stylistname,
             "time": time,
-            "date": datetime.now().strftime("%Y%m%d"),
+            "date": int(datetime.now().strftime("%Y%m%d")),
             "profileId": None,
             "emailAddress": emailaddress,
             "gender": 0,
         }
+        print(f"DEBUG - Payload\n {payload}")
         logging.info("Checking in")
         request_url = self.base_regis_booking_api_url + "addcheckin"
         try:
             response = requests.post(request_url, json=payload, headers=headers)
-            self.checkin = response.json()
+            checkin = response.json()
+            checkin_result = response.json().get("apiResult", None)
+            checkin_id = response.json().get("checkinId", None)
+            print("checkin_result", checkin_result)
+            print("checkin_id", checkin_id)
         except Exception as error:
             logging.error("Error Checking in %s", error)
             return None
-        return self.checkin
+        return checkin

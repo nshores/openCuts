@@ -26,6 +26,7 @@ MY_STYLIST = config.get("Preferences", "my_stylist")
 FIRST_NAME = config.get("Preferences", "first_name")
 LAST_NAME = config.get("Preferences", "last_name")
 PHONE_NUMBER = config.get("Preferences", "phone_number")
+EMAIL_ADDRESS = config.get("Preferences", "email")
 
 
 def clear_screen():
@@ -83,9 +84,7 @@ def main_menu():
                     )
                     # Using enumerate with its default start value (0)
                     for slot_num, slot in enumerate(booking_slots["slots"]):
-                        print(
-                            f"Slot Num {slot_num} - Time Slot {slot['Time']} Available\n"
-                        )
+                        print(f"[{slot_num}] - Time Slot {slot['Time']} Available\n")
                     selected_slot = None
                     while selected_slot is None:
                         selected_slot_num = int(input("Select Slot:"))
@@ -136,23 +135,68 @@ def main_menu():
                 # Present and select a slot if there are any slots available
                 # Perhaps move this to a method
                 if len(booking_slots) > 0:
-                    print(
-                        "\n--------------------\n",
-                        "Choose an open slot:",
-                        "\n--------------------\n",
-                    )
-                    # Using enumerate with its default start value (0)
-                    for slot_num, slot in enumerate(booking_slots):
+                    if MY_STYLIST == "":
+                        # Logic to choose a name since we don't have one defined
                         print(
-                            f"Slot Num {slot_num} - Name: {slot['name']} - Time Slot {slot['times']} Available\n"
+                            "\n--------------------\n",
+                            "Choose a name:",
+                            "\n--------------------\n",
                         )
-                    selected_slot = None
-                    while selected_slot is None:
-                        selected_slot_num = int(input("Select Slot:"))
-                        # Directly use the input number as the index
-                        selected_slot = booking_slots[selected_slot_num]
-                    print("Selected Slot: ", selected_slot["times"])
+                        # Using enumerate with its default start value (0)
+                        for slot_num, slot in enumerate(booking_slots):
+                            print(f"[{slot_num}] Name: {slot['name']}\n")
+                        selected_slot = None
+                        while selected_slot is None:
+                            selected_slot_num = int(input("Select Name:"))
+                            # Directly use the input number as the index
+                            selected_slot = booking_slots[selected_slot_num]
+                    # We already have a name defined
+                    else:
+                        # Find the object containing the name we want to search for
+                        for name in booking_slots:
+                            if name["name"] == MY_STYLIST:
+                                selected_slot = name
+                    print("Available Timeslots: ")
+                    timeslots = []
+                    for hour_block in selected_slot["times"]["hours"]:
+                        hour = hour_block["h"]
+                        for slot, minute in enumerate(hour_block["m"]):
+                            # Format the time as HH:MM
+                            formatted_time = f"{hour:02d}:{minute:02d}"
+                            timeslots.append(formatted_time)
+                    for slot, time in enumerate(timeslots):
+                        print(f"[{slot}] - Time {time}")
+                    selected_time = int(input("Select a timeslot:"))
+                    time = timeslots[selected_time]
+                    selected_stylist = selected_slot["name"]
+                    selected_stylist_id = selected_slot["employeeID"]
+                    time = time.replace(
+                        ":", ""
+                    )  # format time to match what the API expects
+                    # Create a list to send my service in
+                    formatted_service = []
+                    formatted_service.append(MY_SERVICE)
+                    clear_screen()
+                    print(f"Selected time: {timeslots[selected_time]}")
+                    print(
+                        f"Selected Stylist: {selected_stylist} - ID: {selected_stylist_id}  "
+                    )
+                    print(f"Selected Service: {MY_SERVICE} - ID: {selected_service} ")
                     # If you select a slot, continue the rest of the booking flow
+                    choice = input("Ready to book? - Respond with Y/N:\n")
+                    if choice == "Y":
+                        checkin = mySalon.add_check_in(
+                            firstname=FIRST_NAME,
+                            lastname=LAST_NAME,
+                            phonenumber=PHONE_NUMBER,
+                            serviceid=selected_service,
+                            services=formatted_service,
+                            stylistid=selected_stylist_id,
+                            stylistname=selected_stylist,
+                            time=time,
+                            emailaddress=EMAIL_ADDRESS,
+                        )
+                        print(checkin)
             input("Press any key to continue")
         elif choice == "2":
             # TODO - Refactor this to a method
