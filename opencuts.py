@@ -36,7 +36,7 @@ BASE_REGIS_BOOKING_API_URL = "https://api-booking.regiscorp.com/v1/"
 ZENOTI_API_URL = "https://api.zenoti.com/v1/"
 
 
-class Salon:
+class RegisSalon:
     def __init__(self, salon_id, regis_api_key, regis_boking_api_key):
         """
         Initialize a new Salon instance with specific salon ID and Regis API key.

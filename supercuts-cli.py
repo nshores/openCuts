@@ -132,8 +132,8 @@ def main_menu():
             else:
                 selected_service = str(mySalon.find_service_by_name(MY_SERVICE))
                 booking_slots = mySalon.get_availability_of_salon(selected_service)
-                # Present and select a slot if there are any slots available
-                # Perhaps move this to a method
+                # TODO Present and select a slot if there are any slots available
+                # TODO Perhaps move this to a method
                 if len(booking_slots) > 0:
                     if MY_STYLIST == "":
                         # Logic to choose a name since we don't have one defined
@@ -307,7 +307,7 @@ def main_menu():
 
 if __name__ == "__main__":
     # Instantiate the class and get some information about the salon
-    mySalon = opencuts.Salon(SALON_ID, REGIS_API_KEY, REGIS_API_BOOKING_KEY)
+    mySalon = opencuts.RegisSalon(SALON_ID, REGIS_API_KEY, REGIS_API_BOOKING_KEY)
     mySalon.get_salon()  # get salon information
     mySalon.get_salon_services()  # get all the services the salon offers
     mySalon.get_therapists_working()  # get the stylist information

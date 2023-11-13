@@ -1,12 +1,12 @@
 import unittest
 from unittest.mock import patch
-from opencuts import Salon
+from opencuts import RegisSalon
 import requests
 
 
 class TestSalon(unittest.TestCase):
     def setUp(self):
-        self.salon = Salon(
+        self.salon = RegisSalon(
             salon_id="1234",
             regis_api_key="12345678abc",
         )
