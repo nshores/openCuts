@@ -3,7 +3,7 @@ import opencuts
 import os
 import sys
 
-""" A CLI for Supercuts.
+""" A CLI for Regis Salons.
 """
 DRY_RUN = True
 
@@ -60,68 +60,78 @@ def main_menu():
         choice = input("Enter your choice (1-6): ")
 
         if choice == "1":
-            # look up the ID for the stylist and service
-            selected_stylist = mySalon.find_stylist_by_name(MY_STYLIST)
-            selected_service = mySalon.find_service_by_name(MY_SERVICE)
+            if mySalon.pos_type.lower() == "zenoti":
+                # look up the ID for the stylist and service
+                selected_stylist = mySalon.find_stylist_by_name(MY_STYLIST)
+                selected_service = mySalon.find_service_by_name(MY_SERVICE)
 
-            # get some booking slots for the stylist and service selected
-            booking_id = mySalon.create_service_booking(
-                selected_service, selected_stylist
-            )
-            booking_slots = mySalon.get_booking_slot(booking_id)
-            # Present and select a slot if there are any slots available
-            # Perhaps move this to a method
-            if len(booking_slots) > 0:
-                print(
-                    "\n--------------------\n",
-                    "Choose an open slot:",
-                    "\n--------------------\n",
-                )
-                # Using enumerate with its default start value (0)
-                for slot_num, slot in enumerate(booking_slots["slots"]):
-                    print(f"Slot Num {slot_num} - Time Slot {slot['Time']} Available\n")
-                selected_slot = None
-                while selected_slot is None:
-                    selected_slot_num = int(input("Select Slot:"))
-                    # Directly use the input number as the index
-                    selected_slot = booking_slots["slots"][selected_slot_num]
-                print("Selected Slot: " + selected_slot["Time"])
-                # If you select a slot, continue the rest of the booking flow
-                # TODO - Refactor this to a method
-                print("Looking up account information")
-                try:
-                    account_id = mySalon.retrive_guest_detail(
-                        first_name=FIRST_NAME, last_name=LAST_NAME, phone=PHONE_NUMBER
-                    )
-                    account_id = account_id["id"]
-                except:
-                    print("Coud not look up account information")
-                # Flow to handle creating an account if none exists
-                if not account_id:
-                    print("You neeed to make an account - Creating one")
-                    account_id = mySalon.create_account(
-                        first_name=FIRST_NAME,
-                        last_name=LAST_NAME,
-                        phone_number=PHONE_NUMBER,
-                    )
-                    account_id = account_id["id"]
-                # Get another unique booking_ID passing in the user information this time
+                # get some booking slots for the stylist and service selected
                 booking_id = mySalon.create_service_booking(
-                    selected_service, selected_stylist, account_id
+                    selected_service, selected_stylist
                 )
-                # Logic to actually reserve and confirm your slot
-                if not DRY_RUN:
-                    print("Reserving slot")
+                booking_slots = mySalon.get_booking_slot(booking_id)
+                # Present and select a slot if there are any slots available
+                # Perhaps move this to a method
+                if len(booking_slots) > 0:
+                    print(
+                        "\n--------------------\n",
+                        "Choose an open slot:",
+                        "\n--------------------\n",
+                    )
+                    # Using enumerate with its default start value (0)
+                    for slot_num, slot in enumerate(booking_slots["slots"]):
+                        print(
+                            f"Slot Num {slot_num} - Time Slot {slot['Time']} Available\n"
+                        )
+                    selected_slot = None
+                    while selected_slot is None:
+                        selected_slot_num = int(input("Select Slot:"))
+                        # Directly use the input number as the index
+                        selected_slot = booking_slots["slots"][selected_slot_num]
+                    print("Selected Slot: " + selected_slot["Time"])
+                    # If you select a slot, continue the rest of the booking flow
+                    # TODO - Refactor this to a method
+                    print("Looking up account information")
                     try:
-                        mySalon.reserve_selected_slot(selected_slot, booking_id)
+                        account_id = mySalon.retrive_guest_detail(
+                            first_name=FIRST_NAME,
+                            last_name=LAST_NAME,
+                            phone=PHONE_NUMBER,
+                        )
+                        account_id = account_id["id"]
                     except:
-                        print("Could not reserve slot")
-                        sys.exit()
-                    print("Confirming Slot")
-                    try:
-                        mySalon.confirm_selected_slot(booking_id)
-                    except:
-                        print("Could not confirm slot")
+                        print("Coud not look up account information")
+                    # Flow to handle creating an account if none exists
+                    if not account_id:
+                        print("You neeed to make an account - Creating one")
+                        account_id = mySalon.create_account(
+                            first_name=FIRST_NAME,
+                            last_name=LAST_NAME,
+                            phone_number=PHONE_NUMBER,
+                        )
+                        account_id = account_id["id"]
+                    # Get another unique booking_ID passing in the user information this time
+                    booking_id = mySalon.create_service_booking(
+                        selected_service, selected_stylist, account_id
+                    )
+                    # Logic to actually reserve and confirm your slot
+                    if not DRY_RUN:
+                        print("Reserving slot")
+                        try:
+                            mySalon.reserve_selected_slot(selected_slot, booking_id)
+                        except:
+                            print("Could not reserve slot")
+                            sys.exit()
+                        print("Confirming Slot")
+                        try:
+                            mySalon.confirm_selected_slot(booking_id)
+                        except:
+                            print("Could not confirm slot")
+            else:
+                print("Implement non zenoti checkin flow here")
+                selected_service = str(mySalon.find_service_by_name(MY_SERVICE))
+                booking_slots = mySalon.get_availability_of_salon(selected_service)
+                print(booking_slots)
             input("Press any key to continue")
         elif choice == "2":
             # TODO - Refactor this to a method
@@ -236,29 +246,3 @@ if __name__ == "__main__":
     mySalon.get_therapists_working()  # get the stylist information
     # start the menu mainu
     main_menu()
-
-
-# DEBUG
-# Show Store Information
-# print(
-#     "Store ID:" + myStore.store_id,
-#     "\n" + "Zentoi_API_Key:" + myStore.zenoti_api_key,
-#     "\n" + "POS_TYPE:" + myStore.pos_type,
-# )
-# Check attendance
-# working = []
-# for therapist in myStore.therapists:
-#     name = therapist["personal_info"]["name"]
-#     print(f"Checking if {name} is working today")
-#     myStore.get_attendance(name)
-#     if myStore.attendance_total > 0:
-#         print(f"{name} worked today!")
-#         working.append(name)
-#     else:
-#         print(f"{name} did not work today!")
-#     print(f"Attendance Record Total: {myStore.attendance_total}")
-#     for attendance_record in myStore.attendance:
-#         print(
-#             f"Scheduled Checkin: {attendance_record['expected_checkin']}, Scheduled Checkout: {attendance_record['expected_checkout']}\n"
-#         )
-# print(f"Total Workers today: {working}")

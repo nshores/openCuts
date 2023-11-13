@@ -181,15 +181,39 @@ class Salon:
 
     def find_stylist_by_name(self, stylist_name):
         for stylist in self.therapists:
-            if stylist["personal_info"]["first_name"].lower() == stylist_name.lower():
+            if "personal_info" in stylist:
+                if (
+                    stylist["personal_info"]["first_name"].lower()
+                    == stylist_name.lower()
+                ):
+                    return stylist
+            else:
+                stylist["name"].lower() == stylist_name.lower()
                 return stylist
         return None  # If no stylist found with that name
 
     def find_service_by_name(self, service_name):
         for service in self.store_services:
-            if service["catalog_info"]["display_name"].lower() == service_name.lower():
-                return service
-        return None  # If no stylist found with that name
+            if "catalog_info" in service:
+                if (
+                    service["catalog_info"]["display_name"].lower()
+                    == service_name.lower()
+                ):
+                    return service
+            else:
+                for category in self.store_services:
+                    for service in category["services"]:
+                        if service["service"] == service_name:
+                            return service["id"]
+                return None
+        return None  # If no service found with that name
+
+    def find_service_id(data, service_name):
+        for category in data["Services"]:
+            for service in category["services"]:
+                if service["service"] == service_name:
+                    return service["id"]
+        return None
 
     # https://docs.zenoti.com/reference/create-a-service-booking
     def create_service_booking(self, service, stylist, guest_id=None):
@@ -395,5 +419,28 @@ class Salon:
         except Exception as error:
             logging.error("Error Cancelling Appointment %s", error)
             return None
+
+    # for the service you want, who's availble?
+    def get_availability_of_salon(self, serviceid):
+        # input needs to be a string
+        # Handle a non-zenoti type store
+        headers = {
+            "x-api-key": self.regis_api_booking_key,
+        }
+        payload = {
+            "salonId": self.salon_id,
+            "serviceIds": serviceid,
+            "siteId": "1",
+            "date": datetime.now().strftime("%Y%m%d"),
+        }
+        logging.info("Getting Salon Availability")
+        request_url = self.base_regis_booking_api_url + f"getavailabilityofsalon"
+        try:
+            response = requests.post(request_url, json=payload, headers=headers)
+            self.availability = response.json()
+        except Exception as error:
+            logging.error("Error Geting Store availability %s", error)
+            return None
+        return self.availability
 
     # implement get_or_create_account
