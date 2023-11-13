@@ -1,6 +1,6 @@
 # openCuts 💇 - Automate your Haircuts
 
-**`openCuts`** 💇 is an open-source Python library designed to interface with popular salons using public and private API's. It provides a common interface to the  Zeonti (Supercuts), Regis (Supercuts) and StylewareTouch (Greatclips) API's to provide a seamless experience for retrieving salon services, scheduling appointments, and more. This is meant to be used to build future extensions for Home Assistant, Voice Assistants, etc.
+**`openCuts`** 💇 is an open-source Python library designed to interface with popular salons using public and private API's. It provides a common interface to the  [Zentoi](https://docs.zenoti.com/reference) (Supercuts), Regis (Supercuts) and StylewareTouch (Greatclips) API's to provide a seamless experience for retrieving salon services, scheduling appointments, and more. This is meant to be used to build future extensions for Home Assistant, Voice Assistants, etc.
 
 ## Disclaimer  ✂
 
@@ -28,7 +28,7 @@ This library can break at any time, as the companies can change the way their AP
 ## Features
 
 - Retrieve salon services.
-- Get therapists working at a specified salon on a given date.
+- Get stylists working at a specified salon on a given date.
 - List people scheduled at the salon.
 - Check available time slots for a combination of stylist and service.
 - Schedule appointments.
@@ -50,9 +50,7 @@ You need to copy and fill out the `config-example` file to `config.ini` with
 
 - The `api.regis.com` API Key obtained from their website
 - The `api-booking.regis.com` API key obtained from their website
-- Your local `Salon_ID`
-
-The rest of the fields are optional but should be filled out if you want to use this non-interactively (In a script).
+- Your local `Salon_ID` obtained from the website
 
 ```
 [Opencuts]
@@ -106,9 +104,9 @@ print("\nStore Services:\n")
 for service in myStore.store_services:
     print(f"Service Name: {service['catalog_info']['display_name']}, ID: {service['id']}\n")
 # Show Store Stylists
-print("Store Therapists")
+print("Store Stylists")
 for therapist in myStore.therapists:
-    print(f"Therapist Name: {therapist['personal_info']['name']}, ID: {therapist['id']}\n")
+    print(f"Stylist Name: {therapist['personal_info']['name']}, ID: {therapist['id']}\n")
 ```
 
 ## Super-Cuts CLI

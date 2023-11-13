@@ -124,12 +124,8 @@ class RegisSalon:
 
     def get_salon_services(self):
         """
-        Retrieve salon information using its unique identifier and set essential details.
+        Retrieve salon services
 
-        This method makes an API request to retrieve salon information, including the Zenoti API key, store ID, and POS type, using the salon's unique identifier.
-
-        Returns:
-            tuple: A tuple containing the Zenoti API key, store ID, and POS type if the request is successful, otherwise None.
         """
         if self.pos_type.lower() == "zenoti":
             headers = {
@@ -451,8 +447,7 @@ class RegisSalon:
             return None
 
     # for the service you want, who's availble?
-    def get_availability_of_salon(self, serviceid):
-        # input needs to be a string
+    def get_availability_of_salon(self, serviceid: str):
         # Handle a non-zenoti type store
         headers = {
             "x-api-key": self.regis_api_booking_key,
