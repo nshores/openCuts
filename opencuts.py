@@ -2,6 +2,8 @@ import logging
 import sys
 from datetime import datetime
 import requests
+import uuid
+import os
 
 """ openCuts - an opensource library for interacting with Regis Properties Salons. Currentley supports Supercuts but in the future will support other Regis properties that use the same API's. 
     - User is expected to include the regis_api_key, and salon_id
@@ -61,6 +63,16 @@ class RegisSalon:
         self.storeaddress = None
         self.storename = None
         self.storephone = None
+        self.device_uuid_str = None
+
+        # Generate and store UUID only once
+        if not os.path.exists("device_uuid"):
+            with open("device_uuid", "w") as f:
+                device_uuid = uuid.uuid4()
+                self.device_uuid_str = str(
+                    device_uuid
+                )  # Convert the UUID object to a string
+                f.write(self.device_uuid_str)
 
     def get_salon(self):
         """
@@ -496,6 +508,7 @@ class RegisSalon:
 
         This function sends a request to the salon's booking system to add a check-in with the provided details.
         """
+        device_uuid = "SC-W-" + self.device_uuid_str
         headers = {
             "x-api-key": self.regis_api_booking_key,
         }
@@ -508,7 +521,7 @@ class RegisSalon:
             "services": services,
             "siteId": "1",
             "source": "SCWEB",
-            "sourceId": "SC-W-80bfb00e-c3df-43cd-a420-7af8da98a387",
+            "sourceId": device_uuid,
             "storeAddress": self.storeaddress,
             "storeName": self.storename,
             "storePhone": self.storephone,
