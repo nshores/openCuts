@@ -63,8 +63,8 @@ class RegisSalon:
         self.storeaddress = None
         self.storename = None
         self.storephone = None
-        self.device_uuid_str = None
 
+        # UUID Logic
         # Generate and store UUID only once
         if not os.path.exists("device_uuid"):
             with open("device_uuid", "w") as f:
@@ -73,6 +73,9 @@ class RegisSalon:
                     device_uuid
                 )  # Convert the UUID object to a string
                 f.write(self.device_uuid_str)
+        f = open("device_uuid", "r")
+        self.device_uuid_str = str(f.read())
+        f.close()
 
     def get_salon(self):
         """
