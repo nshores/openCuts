@@ -200,6 +200,7 @@ def main_menu():
             input("Press any key to continue")
         elif choice == "2":
             # TODO - Refactor this to a method
+            # TODO Add support for non zenoti. Use the stored sourceID to lookup appointments.
             print("Looking up account information")
             try:
                 account_id = mySalon.retrive_guest_detail(
@@ -226,6 +227,7 @@ def main_menu():
             input("Press any key to continue")
         elif choice == "3":
             # TODO - Make this call a method.
+            # TODO - add suppport for non-zenoti. Use the souceID to find the appointment checkinId and call cancelcheckin
             print("Looking up account information")
             try:
                 account_id = mySalon.retrive_guest_detail(
