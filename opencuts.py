@@ -172,7 +172,6 @@ class Salon:
         try:
             response = requests.post(request_url, json=payload, headers=headers)
             self.therapists = response.json().get("Stylists", None)
-            print("Stylists:", self.therapists)
         except Exception as error:
             logging.error("Error Geting Store Stylists %s", error)
             return None
@@ -461,24 +460,46 @@ class Salon:
 
     def add_check_in(
         self,
-        firstname,
-        lastname,
-        phonenumber,
-        serviceid,
-        services,
-        stylistid,
-        stylistname,
-        time,
-        date,
-        emailaddress,
+        firstname: str,
+        lastname: str,
+        phonenumber: str,
+        serviceid: str,
+        services: list,
+        stylistid: str,
+        stylistname: str,
+        time: str,
+        emailaddress: str,
     ):
+        """
+        Add a check-in for a customer at a salon.
+
+        Args:
+            firstname (str): The first name of the customer.
+            lastname (str): The last name of the customer.
+            phonenumber (str): The phone number of the customer.
+            serviceid (str): The ID of the service being availed.
+            services (list): A list of services being availed.
+            stylistid (str): The ID of the stylist chosen.
+            stylistname (str): The name of the stylist chosen.
+            time (str): The time of the appointment.
+            date (datetime): The date of the appointment.
+            emailaddress (str): The email address of the customer.
+
+        Returns:
+            Optional[Dict[str, Any]]: The response from the check-in API or None in case of an error.
+
+        Raises:
+            Exception: If there's an error in the API request.
+
+        This function sends a request to the salon's booking system to add a check-in with the provided details.
+        """
         headers = {
             "x-api-key": self.regis_api_booking_key,
         }
         payload = {
             "firstName": firstname,
             "lastName": lastname,
-            "phoneNumber": self.storephone,
+            "phoneNumber": phonenumber,
             "salonId": self.salon_id,
             "serviceId": serviceid,
             "services": [
@@ -490,12 +511,12 @@ class Salon:
             "storeAddress": self.storeaddress,
             "storeName": self.storename,
             "storePhone": self.storephone,
-            "stylistId": "30",
-            "stylistName": "Cora",
-            "time": "1130",
+            "stylistId": stylistid,
+            "stylistName": stylistname,
+            "time": time,
             "date": datetime.now().strftime("%Y%m%d"),
             "profileId": None,
-            "emailAddress": "JohnBGarrett@teleworm.us",
+            "emailAddress": emailaddress,
             "gender": 0,
         }
         logging.info("Checking in")

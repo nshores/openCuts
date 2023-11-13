@@ -44,6 +44,9 @@ def main_menu():
         print("openCuts is running! 💇\n")
         print("Salon Type:", mySalon.pos_type)
         print(
+            "Store Info:", mySalon.storeaddress, mySalon.storename, mySalon.storephone
+        )
+        print(
             "My SALON_ID:",
             SALON_ID + "\n" "MY_SERVICE:",
             MY_SERVICE + "\n" "MY_STYLIST:",
@@ -128,7 +131,6 @@ def main_menu():
                         except:
                             print("Could not confirm slot")
             else:
-                print("Implement non zenoti checkin flow here")
                 selected_service = str(mySalon.find_service_by_name(MY_SERVICE))
                 booking_slots = mySalon.get_availability_of_salon(selected_service)
                 # Present and select a slot if there are any slots available
