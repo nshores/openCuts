@@ -200,74 +200,101 @@ def main_menu():
             input("Press any key to continue")
         elif choice == "2":
             # TODO - Refactor this to a method
-            # TODO Add support for non zenoti. Use the stored sourceID to lookup appointments.
-            print("Looking up account information")
-            try:
-                account_id = mySalon.retrive_guest_detail(
-                    first_name=FIRST_NAME, last_name=LAST_NAME, phone=PHONE_NUMBER
-                )
-                account_id = account_id["id"]
-            except:
-                print("Coud not look up account information")
-            # Flow to handle creating an account if none exists
-            if not account_id:
-                print("You neeed to make an account - Creating one")
-                account_id = mySalon.create_account(
-                    first_name=FIRST_NAME,
-                    last_name=LAST_NAME,
-                    phone_number=PHONE_NUMBER,
-                )
-                account_id = account_id["id"]
-            appointments = mySalon.get_appointments(account_id)
-            if not appointments:
-                print("No Appointments today")
+            if mySalon.pos_type.lower() == "zenoti":
+                print("Looking up account information")
+                try:
+                    account_id = mySalon.retrive_guest_detail(
+                        first_name=FIRST_NAME, last_name=LAST_NAME, phone=PHONE_NUMBER
+                    )
+                    account_id = account_id["id"]
+                except:
+                    print("Coud not look up account information")
+                # Flow to handle creating an account if none exists
+                if not account_id:
+                    print("You neeed to make an account - Creating one")
+                    account_id = mySalon.create_account(
+                        first_name=FIRST_NAME,
+                        last_name=LAST_NAME,
+                        phone_number=PHONE_NUMBER,
+                    )
+                    account_id = account_id["id"]
+                appointments = mySalon.get_appointments(account_id)
+                if not appointments:
+                    print("No Appointments today")
+                else:
+                    print("Your Appointments Today:")
+                    print(appointments)
             else:
-                print("Your Appointments Today:")
-                print(appointments)
+                print("Looking up appointments")
+                appointments = mySalon.get_check_in_by_source()
+                if not appointments:
+                    print("No Appointments today")
+                else:
+                    print("Your Appointments Today:")
+                    for apt in appointments:
+                        print(
+                            f"{apt['date']} - {apt['time']} - service {apt['services'][0]}"
+                        )
             input("Press any key to continue")
         elif choice == "3":
             # TODO - Make this call a method.
             # TODO - add suppport for non-zenoti. Use the souceID to find the appointment checkinId and call cancelcheckin
-            print("Looking up account information")
-            try:
-                account_id = mySalon.retrive_guest_detail(
-                    first_name=FIRST_NAME, last_name=LAST_NAME, phone=PHONE_NUMBER
-                )
-                account_id = account_id["id"]
-            except:
-                print("Coud not look up account information")
-            # Flow to handle creating an account if none exists
-            if not account_id:
-                print("You neeed to make an account - Creating one")
-                account_id = mySalon.create_account(
-                    first_name=FIRST_NAME,
-                    last_name=LAST_NAME,
-                    phone_number=PHONE_NUMBER,
-                )
-                account_id = account_id["id"]
-            appointments = mySalon.get_appointments(account_id)
-            print(appointments)
-            if len(appointments) > 0:
-                print("Appointment List:")
-                # Using enumerate with its default start value (0)
-                for slot_num, ap in enumerate(appointments):
-                    print(
-                        f"Slot Num {slot_num} - Time Slot {ap['appointment_services']['start_time']} \n"
+            if mySalon.pos_type.lower() == "zenoti":
+                print("Looking up account information")
+                try:
+                    account_id = mySalon.retrive_guest_detail(
+                        first_name=FIRST_NAME, last_name=LAST_NAME, phone=PHONE_NUMBER
                     )
-                selected_slot = None
-                while selected_slot is None:
-                    selected_slot_num = int(input("Select Slot:"))
-                    # Directly use the input number as the index
-                    selected_appointment = appointments[selected_slot_num]
-                print(
-                    "Selected Appointment: "
-                    + selected_appointment["appointment_services"]["start_time"]
-                )
-                print("Cancelling Appointment")
-                mySalon.cancel_appointment(selected_appointment["invoice_id"])
+                    account_id = account_id["id"]
+                except:
+                    print("Coud not look up account information")
+                # Flow to handle creating an account if none exists
+                if not account_id:
+                    print("You neeed to make an account - Creating one")
+                    account_id = mySalon.create_account(
+                        first_name=FIRST_NAME,
+                        last_name=LAST_NAME,
+                        phone_number=PHONE_NUMBER,
+                    )
+                    account_id = account_id["id"]
+                appointments = mySalon.get_appointments(account_id)
+                print(appointments)
+                if len(appointments) > 0:
+                    print("Appointment List:")
+                    # Using enumerate with its default start value (0)
+                    for slot_num, ap in enumerate(appointments):
+                        print(
+                            f"Slot Num {slot_num} - Time Slot {ap['appointment_services']['start_time']} \n"
+                        )
+                    selected_slot_num = None
+                    while selected_slot_num is None:
+                        selected_slot_num = int(input("Select Slot:"))
+                        # Directly use the input number as the index
+                        selected_appointment = appointments[selected_slot_num]
+                    print(
+                        "Selected Appointment: "
+                        + selected_appointment["appointment_services"]["start_time"]
+                    )
+                    print("Cancelling Appointment")
+                    mySalon.cancel_appointment(selected_appointment["invoice_id"])
+                else:
+                    print("No Appointments found")
             else:
-                print("No Appointments found")
-                input("Press any key to continue")
+                print("Looking up appointments")
+                appointments = mySalon.get_check_in_by_source()
+                if len(appointments) > 0:
+                    # Using enumerate with its default start value (0)
+                    for slot_num, ap in enumerate(appointments):
+                        print(f"[{slot_num}] - Time Slot {ap['time']} \n")
+                    selected_slot_num = None
+                    while selected_slot_num is None:
+                        selected_slot_num = int(input("Select Appointment Slot:"))
+                        # Directly use the input number as the index
+                        selected_appointment = appointments[selected_slot_num]
+                    print("Selected Appointment: " + selected_appointment["time"])
+                    print("Cancelling Appointment")
+                    mySalon.cancel_checkin(selected_appointment["checkinId"])
+            input("Press any key to continue")
 
         elif choice == "4":
             print("\nStore Services:\n")

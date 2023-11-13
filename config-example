@@ -7,7 +7,6 @@ regis_api_key = abc123
 regis_booking_api_key = abc123
 
 [Preferences]
-#All fields optional, will prompt for any missing fields.
 email = Edward.Scissorhands@gmail.com
 first_name = Edward 
 last_name = Scissorhands

@@ -17,7 +17,7 @@ import os
         - create a user
         - cancel appointment for user
         - see upcoming appointments for user
-        #TODO - Support for all pos_types
+         - Support for all pos_types
 
 
 
@@ -547,3 +547,46 @@ class RegisSalon:
             logging.error("Error Checking in %s", error)
             return None
         return checkin_result, checkin_id
+
+    def get_check_in_by_source(self):
+        headers = {
+            "x-api-key": self.regis_api_booking_key,
+        }
+        payload = {
+            "sourceId": "SC-W-" + self.device_uuid_str,
+            "profileId": None,
+        }
+        logging.info("Getting Checkins")
+        request_url = self.base_regis_booking_api_url + "getcheckinbysource"
+        try:
+            response = requests.post(request_url, json=payload, headers=headers)
+            checkins = response.json()
+        except Exception as error:
+            logging.error("Error Geting Checkins %s", error)
+            return None
+        return checkins
+
+    def cancel_checkin(self, checkinid):
+        """Cancels a checkin using the api-booking regis API
+
+        Args:
+            checkinid (_type_): _description_
+
+        Returns:
+            _type_: _description_
+        """
+        headers = {
+            "x-api-key": self.regis_api_booking_key,
+        }
+        payload = {
+            "checkinId": checkinid,
+        }
+        logging.info("Cancelling checkin")
+        request_url = self.base_regis_booking_api_url + "cancelcheckin"
+        try:
+            response = requests.post(request_url, json=payload, headers=headers)
+            cancel_checkin = response.json()
+        except Exception as error:
+            logging.error("Error Cancelling Checkin %s", error)
+            return None
+        return cancel_checkin
