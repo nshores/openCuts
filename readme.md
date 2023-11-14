@@ -2,6 +2,8 @@
 
 **`openCuts`** 💇 is an open-source Python library designed to interface with popular salons using public and private API's. It provides a common interface to the  [Zentoi](https://docs.zenoti.com/reference) (Supercuts), Regis (Supercuts) and StylewareTouch (Greatclips) API's to provide a seamless experience for retrieving salon services, scheduling appointments, and more. This is meant to be used to build future extensions for Home Assistant, Voice Assistants, etc.
 
+This repo includes `supercuts-sli` which is small CLI program that allows you to book haricuts and other serivces at regis salons, and serves as an example of using this library.
+
 ## Disclaimer  ✂
 
 <em>This project relies on private API's hosted by the Regis Corporation, Zenoti, and Greatclips for core functionality. This project is not endorsed or affiliated with those companies in any way. This is a private project not related to my {dayjob} and a completely independent work.
@@ -38,17 +40,41 @@ This library can break at any time, as the companies can change the way their AP
 
 ## Installation
 
-Install the Library with `pip`
+- Clone this repo
+- Use `pip` to install the requirements
+- Copy the example configuration to a new file.
 
 ```bash
-pip install opencuts
+git clone https://github.com/nshores/openCuts.git
+pip install requirements.txt
+cp config-example config.ini
 ```
+
+## API Key Retrival
+
+- The API keys used for this project are embedded in the Regis Corporation salon websites source. (Supercuts, etc). To retrive the key:
+  - Enable developer mode on your browser
+    **Firefox Menu - Tools > Browser Tools > Web Developer Tools (or `CTRL+SHIFT+I`)**  
+    **Chrome Menu - More Tools > Developer tools (or `CTRL+SHIFT+I`)**
+  - Navigate to the [salon search](https://www.supercuts.com/home) and search for any location  
+    <img src="docs/supercuts_search_page.png" width="600" height="500">
+  - In the developer console, find a GET reqeust like `https://api.regiscorp.com/sis/api/salon?salon-number=xxx`
+  - Note the `authorization` header in the `headers` section. This is your `REGIS_API_KEY` ![regis api key](docs/regis_api_key.png)
+  - In the developer console, find a POST reqeust like `https://api-booking.regiscorp.com/v1/searchbymapregion`
+  - Note the `x-api-key` header in the `headers` section. This is your `REGIS_API_BOOKING_KEY` ![regis api booking key](docs/regis_api_booking_key.png)
+
+## Salon ID retrival
+
+- The Salon ID can be found in the URL of any Salon:  
+`https://www.supercuts.com/locations/nearme/haircut/CA/Los-Angeles/Hollywood-Blvd-And-Sunset/8876?location=los%20angeles`
+- 8876 is the salon ID
 
 ## Configuration
 
-You need to copy and fill out the `config-example` file to `config.ini` with
+Fill out the `config-example` file to `config.ini` with:
 
 - The `api.regis.com` API Key obtained from their website
+
 - The `api-booking.regis.com` API key obtained from their website
 - Your local `Salon_ID` obtained from the website
 
@@ -62,7 +88,7 @@ regis_api_key = abc123
 regis_booking_api_key = abc123
 
 [Preferences]
-#All fields optional, will prompt for any missing fields.
+#All fields below required
 email = Edward.Scissorhands@gmail.com
 first_name = Edward 
 last_name = Scissorhands
@@ -72,12 +98,22 @@ my_service = Supercut
 my_stylist = Sweeney
 ```
 
+## Super-Cuts CLI
+
+`supercuts-cli` is a full fledged program meant to interactively and non-interactively create and manage user bookings at a Supercuts or other regis location. Support for non-interactive mode coming using only parameters for more automation potential.
+  
+Usage:
+
+```
+python3 supercuts-cli.py
+```
+
 ## Library Example Usage
 
-To use the library, you will need an API key and salon ID. Here's a quick example to get you started:
+To use the library, you will need an API key and salon ID at a minimum. Here's a quick example to get you started:
 
 ```python
-from opencuts import salon
+import opencuts.opencuts as opencuts
 
 SALON_ID = 1234
 REGIS_API_KEY = abc123
@@ -86,7 +122,7 @@ MY_STYLIST =
 MY_SERVICE = Supercut
 
 # Instantiate the class and get some information about the salon
-myStore = opencuts.Salon(SALON_ID, REGIS_API_KEY)
+myStore = opencuts.RegisSalon(SALON_ID, REGIS_API_KEY)
 myStore.get_salon()  # get salon information
 myStore.get_salon_services()  # get all the services the salon offers
 myStore.get_therapists_working()  # get the stylist information
@@ -107,16 +143,6 @@ for service in myStore.store_services:
 print("Store Stylists")
 for therapist in myStore.therapists:
     print(f"Stylist Name: {therapist['personal_info']['name']}, ID: {therapist['id']}\n")
-```
-
-## Super-Cuts CLI
-
-`supercuts-cli` is a full fledged program meant to interactively and non-interactively create and manage user bookings at a Supercuts or other regis location.  
-  
-Usage:
-
-```
-python supercuts-cli.py
 ```
 
 ## Contribution
