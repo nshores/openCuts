@@ -55,8 +55,8 @@ cp config-example config.ini
 - Although the API keys for this project are publicly available (In the `main.js` source code), I have chosen to not include them to reduce any potential liability.
 - The API keys used for this project are embedded in the Regis Corporation salon websites source. (Supercuts, etc). To retrive the key:
   - Enable developer mode on your browser
-    **Firefox Menu - Tools > Browser Tools > Web Developer Tools (or `CTRL+SHIFT+I`)**
-    **Chrome Menu - More Tools > Developer tools (or `CTRL+SHIFT+I`)**
+    **Firefox Menu - Tools > Browser Tools > Web Developer Tools (or `F12`)**. 
+    **Chrome Menu - More Tools > Developer tools (or `F12`)**  
   - Navigate to the [salon search](https://www.supercuts.com/home) and search for any location  
     <img src="docs/supercuts_search_page.png" width="600" height="500">
   - In the developer console, find a GET reqeust like `https://api.regiscorp.com/sis/api/salon?salon-number=xxx`
