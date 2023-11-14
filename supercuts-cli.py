@@ -45,6 +45,9 @@ def get_choice(first_number: int, last_number: int):
             if first_number == 0 and last_number == 1:
                 print(f"Only one choice available: {first_number}")
                 return first_number
+            last_number = (
+                last_number - 1
+            )  # to make the output match the possible numbers (we are starting from 0)
             choice = int(
                 input(f"Enter your choice between ({first_number} and {last_number}): ")
             )
