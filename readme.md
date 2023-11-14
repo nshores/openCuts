@@ -52,6 +52,7 @@ cp config-example config.ini
 
 ## API Key Retrival for Regis Salons (Supercuts, Etc)
 
+- Although the API keys for this project are publicly available, I have chosen to not include them to reduce any potential liability.
 - The API keys used for this project are embedded in the Regis Corporation salon websites source. (Supercuts, etc). To retrive the key:
   - Enable developer mode on your browser
     **Firefox Menu - Tools > Browser Tools > Web Developer Tools (or `CTRL+SHIFT+I`)**
