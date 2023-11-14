@@ -38,6 +38,26 @@ def clear_screen():
         _ = os.system("clear")
 
 
+def get_choice(first_number: int, last_number: int):
+    while True:
+        try:
+            # Adjust the range if last_number is 1 and first_number is 0
+            if first_number == 0 and last_number == 1:
+                print(f"Only one choice available: {first_number}")
+                return first_number
+            choice = int(
+                input(f"Enter your choice between ({first_number} and {last_number}): ")
+            )
+            if first_number <= choice <= last_number:
+                return choice
+            else:
+                print(
+                    f"Invalid choice. Please enter a number between {first_number} and {last_number}."
+                )
+        except ValueError:
+            print("Invalid input. Please enter a number.")
+
+
 # Our menu function and logic for each action
 def main_menu():
     while True:
@@ -61,9 +81,9 @@ def main_menu():
         print("5. View Store Stylists")
         print("6. Exit")
 
-        choice = input("Enter your choice (1-6): ")
+        choice = get_choice(1, 6)
 
-        if choice == "1":
+        if choice == 1:
             if mySalon.pos_type.lower() == "zenoti":
                 # look up the ID for the stylist and service
                 selected_stylist = mySalon.find_stylist_by_name(MY_STYLIST)
@@ -87,7 +107,7 @@ def main_menu():
                         print(f"[{slot_num}] - Time Slot {slot['Time']} Available\n")
                     selected_slot = None
                     while selected_slot is None:
-                        selected_slot_num = int(input("Select Slot:"))
+                        selected_slot_num = get_choice(0, len(booking_slots))
                         # Directly use the input number as the index
                         selected_slot = booking_slots["slots"][selected_slot_num]
                     print("Selected Slot: " + selected_slot["Time"])
@@ -129,6 +149,8 @@ def main_menu():
                             mySalon.confirm_selected_slot(booking_id)
                         except:
                             print("Could not confirm slot")
+                else:
+                    print("No booking slots available")
             else:
                 selected_service = str(mySalon.find_service_by_name(MY_SERVICE))
                 booking_slots = mySalon.get_availability_of_salon(selected_service)
@@ -147,7 +169,7 @@ def main_menu():
                             print(f"[{slot_num}] Name: {slot['name']}\n")
                         selected_slot = None
                         while selected_slot is None:
-                            selected_slot_num = int(input("Select Name:"))
+                            selected_slot_num = get_choice(0, len(booking_slots))
                             # Directly use the input number as the index
                             selected_slot = booking_slots[selected_slot_num]
                     # We already have a name defined
@@ -164,41 +186,48 @@ def main_menu():
                             # Format the time as HH:MM
                             formatted_time = f"{hour:02d}:{minute:02d}"
                             timeslots.append(formatted_time)
-                    for slot, time in enumerate(timeslots):
-                        print(f"[{slot}] - Time {time}")
-                    selected_time = int(input("Select a timeslot:"))
-                    time = timeslots[selected_time]
-                    selected_stylist = selected_slot["name"]
-                    selected_stylist_id = selected_slot["employeeID"]
-                    time = time.replace(
-                        ":", ""
-                    )  # format time to match what the API expects
-                    # Create a list to send my service in
-                    formatted_service = []
-                    formatted_service.append(MY_SERVICE)
-                    clear_screen()
-                    print(f"Selected time: {timeslots[selected_time]}")
-                    print(
-                        f"Selected Stylist: {selected_stylist} - ID: {selected_stylist_id}  "
-                    )
-                    print(f"Selected Service: {MY_SERVICE} - ID: {selected_service} ")
-                    # If you select a slot, continue the rest of the booking flow
-                    choice = input("Ready to book? - Respond with Y/N:\n")
-                    if choice == "Y":
-                        checkin = mySalon.add_check_in(
-                            firstname=FIRST_NAME,
-                            lastname=LAST_NAME,
-                            phonenumber=PHONE_NUMBER,
-                            serviceid=selected_service,
-                            services=formatted_service,
-                            stylistid=selected_stylist_id,
-                            stylistname=selected_stylist,
-                            time=time,
-                            emailaddress=EMAIL_ADDRESS,
+                    if len(timeslots) > 0:
+                        selected_time = get_choice(0, len(timeslots))
+                        for slot, time in enumerate(timeslots):
+                            print(f"[{slot}] - Time {time}")
+                        time = timeslots[selected_time]
+                        selected_stylist = selected_slot["name"]
+                        selected_stylist_id = selected_slot["employeeID"]
+                        time = time.replace(
+                            ":", ""
+                        )  # format time to match what the API expects
+                        # Create a list to send my service in
+                        formatted_service = []
+                        formatted_service.append(MY_SERVICE)
+                        clear_screen()
+                        print(f"Selected time: {timeslots[selected_time]}")
+                        print(
+                            f"Selected Stylist: {selected_stylist} - ID: {selected_stylist_id}  "
                         )
-                        print(checkin)
+                        print(
+                            f"Selected Service: {MY_SERVICE} - ID: {selected_service} "
+                        )
+                        # If you select a slot, continue the rest of the booking flow
+                        choice = input("Ready to book? - Respond with Y or N:\n")
+                        if choice == "Y":
+                            checkin = mySalon.add_check_in(
+                                firstname=FIRST_NAME,
+                                lastname=LAST_NAME,
+                                phonenumber=PHONE_NUMBER,
+                                serviceid=selected_service,
+                                services=formatted_service,
+                                stylistid=selected_stylist_id,
+                                stylistname=selected_stylist,
+                                time=time,
+                                emailaddress=EMAIL_ADDRESS,
+                            )
+                            print(checkin)
+                        if choice == "N":
+                            break
+                    else:
+                        print("No timeslots!")
             input("Press any key to continue")
-        elif choice == "2":
+        elif choice == 2:
             # TODO - Refactor this to a method
             if mySalon.pos_type.lower() == "zenoti":
                 print("Looking up account information")
@@ -236,7 +265,7 @@ def main_menu():
                             f"{apt['date']} - {apt['time']} - service {apt['services'][0]}"
                         )
             input("Press any key to continue")
-        elif choice == "3":
+        elif choice == 3:
             # TODO - Make this call a method.
             # TODO - add suppport for non-zenoti. Use the souceID to find the appointment checkinId and call cancelcheckin
             if mySalon.pos_type.lower() == "zenoti":
@@ -268,7 +297,7 @@ def main_menu():
                         )
                     selected_slot_num = None
                     while selected_slot_num is None:
-                        selected_slot_num = int(input("Select Slot:"))
+                        selected_slot_num = get_choice(0, len(appointments))
                         # Directly use the input number as the index
                         selected_appointment = appointments[selected_slot_num]
                     print(
@@ -288,7 +317,7 @@ def main_menu():
                         print(f"[{slot_num}] - Time Slot {ap['time']} \n")
                     selected_slot_num = None
                     while selected_slot_num is None:
-                        selected_slot_num = int(input("Select Appointment Slot:"))
+                        selected_slot_num = get_choice(0, len(appointments))
                         # Directly use the input number as the index
                         selected_appointment = appointments[selected_slot_num]
                     print("Selected Appointment: " + selected_appointment["time"])
@@ -296,7 +325,7 @@ def main_menu():
                     mySalon.cancel_checkin(selected_appointment["checkinId"])
             input("Press any key to continue")
 
-        elif choice == "4":
+        elif choice == 4:
             print("\nStore Services:\n")
             # TODO -  move logic to a method
             if mySalon.pos_type.lower() == "zenoti":
@@ -312,7 +341,7 @@ def main_menu():
                         print("  Service Name:", service["service"])
             input("Press any key to continue")
 
-        elif choice == "5":
+        elif choice == 5:
             print("\nStore Stylists:\n")
             # TODO - move logic to a method
             if mySalon.pos_type.lower() == "zenoti":
@@ -325,7 +354,7 @@ def main_menu():
                     print(f"Stylist Name: {therapist['name']}\n")
             input("Press any key to continue")
 
-        elif choice == "6":
+        elif choice == 6:
             print("Exiting program.")
             break
         else:

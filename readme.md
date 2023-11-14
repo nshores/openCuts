@@ -46,7 +46,7 @@ This library can break at any time, as the companies can change the way their AP
 
 ```bash
 git clone https://github.com/nshores/openCuts.git
-pip install requirements.txt
+pip install -r requirements.txt
 cp config-example config.ini
 ```
 
