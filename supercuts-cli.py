@@ -84,7 +84,7 @@ def main_menu():
         print("5. View Store Stylists")
         print("6. Exit")
 
-        choice = get_choice(1, 6)
+        choice = get_choice(1, 7)
 
         if choice == 1:
             if mySalon.pos_type.lower() == "zenoti":
