@@ -50,11 +50,11 @@ pip install requirements.txt
 cp config-example config.ini
 ```
 
-## API Key Retrival
+## API Key Retrival for Regis Salons (Supercuts, Etc)
 
 - The API keys used for this project are embedded in the Regis Corporation salon websites source. (Supercuts, etc). To retrive the key:
   - Enable developer mode on your browser
-    **Firefox Menu - Tools > Browser Tools > Web Developer Tools (or `CTRL+SHIFT+I`)**  
+    **Firefox Menu - Tools > Browser Tools > Web Developer Tools (or `CTRL+SHIFT+I`)**
     **Chrome Menu - More Tools > Developer tools (or `CTRL+SHIFT+I`)**
   - Navigate to the [salon search](https://www.supercuts.com/home) and search for any location  
     <img src="docs/supercuts_search_page.png" width="600" height="500">
@@ -71,12 +71,13 @@ cp config-example config.ini
 
 ## Configuration
 
-Fill out the `config-example` file to `config.ini` with:
+Fill out the `config.ini` file with:
 
 - The `api.regis.com` API Key obtained from their website
 
 - The `api-booking.regis.com` API key obtained from their website
 - Your local `Salon_ID` obtained from the website
+- The rest of the required fields
 
 ```
 [Opencuts]
@@ -94,7 +95,7 @@ first_name = Edward
 last_name = Scissorhands
 phone_number = 5558675309
 my_service = Supercut
-#If no stylist selected - It will default to "Next Available"
+# Optional, If no stylist selected - It will default to "Next Available"
 my_stylist = Sweeney
 ```
 
@@ -106,6 +107,25 @@ Usage:
 
 ```
 python3 supercuts-cli.py
+
+openCuts is running! 💇
+
+Salon Type: Zenoti
+Store Info: MARKET LOFTS 645 W 9TH ST STE 111, LOS ANGELES, CA
+My SALON_ID: 80925 
+MY_SERVICE: Supercut
+MY_STYLIST:
+
+
+Main Menu:
+
+1. Book an Appointment
+2. View My Appointments
+3. Cancel Appointment
+4. View Store Services
+5. View Store Stylists
+6. Exit
+Enter your choice (1-6): 
 ```
 
 ## Library Example Usage
