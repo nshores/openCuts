@@ -5,7 +5,7 @@ import sys
 
 """ A CLI for Regis Salons.
 """
-DRY_RUN = True
+DRY_RUN = False
 
 # Check to make sure the config exists
 if not os.path.exists("config.ini"):
@@ -107,7 +107,7 @@ def main_menu():
                         print(f"[{slot_num}] - Time Slot {slot['Time']} Available\n")
                     selected_slot = None
                     while selected_slot is None:
-                        selected_slot_num = get_choice(0, len(booking_slots))
+                        selected_slot_num = get_choice(0, len(booking_slots["slots"]))
                         # Directly use the input number as the index
                         selected_slot = booking_slots["slots"][selected_slot_num]
                     print("Selected Slot: " + selected_slot["Time"])
@@ -187,9 +187,9 @@ def main_menu():
                             formatted_time = f"{hour:02d}:{minute:02d}"
                             timeslots.append(formatted_time)
                     if len(timeslots) > 0:
-                        selected_time = get_choice(0, len(timeslots))
                         for slot, time in enumerate(timeslots):
                             print(f"[{slot}] - Time {time}")
+                        selected_time = get_choice(0, len(timeslots))
                         time = timeslots[selected_time]
                         selected_stylist = selected_slot["name"]
                         selected_stylist_id = selected_slot["employeeID"]
@@ -267,7 +267,6 @@ def main_menu():
             input("Press any key to continue")
         elif choice == 3:
             # TODO - Make this call a method.
-            # TODO - add suppport for non-zenoti. Use the souceID to find the appointment checkinId and call cancelcheckin
             if mySalon.pos_type.lower() == "zenoti":
                 print("Looking up account information")
                 try:
@@ -293,7 +292,7 @@ def main_menu():
                     # Using enumerate with its default start value (0)
                     for slot_num, ap in enumerate(appointments):
                         print(
-                            f"Slot Num {slot_num} - Time Slot {ap['appointment_services']['start_time']} \n"
+                            f"Slot Num {slot_num} - Time Slot {ap['appointment_services'][0]['start_time']} \n"
                         )
                     selected_slot_num = None
                     while selected_slot_num is None:
@@ -302,7 +301,7 @@ def main_menu():
                         selected_appointment = appointments[selected_slot_num]
                     print(
                         "Selected Appointment: "
-                        + selected_appointment["appointment_services"]["start_time"]
+                        + selected_appointment["appointment_services"][0]["start_time"]
                     )
                     print("Cancelling Appointment")
                     mySalon.cancel_appointment(selected_appointment["invoice_id"])
