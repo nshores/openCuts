@@ -5,7 +5,7 @@ import requests
 import uuid
 import os
 
-""" openCuts - an opensource library for interacting with Regis Properties Salons. Currentley supports Supercuts but in the future will support other Regis properties that use the same API's. 
+""" openCuts - an opensource library for interacting with Regis Properties Salons. 
     - User is expected to include the regis_api_key, regis_booking_api_key and salon_id
     - Features:
         - Get Salon Services
@@ -27,7 +27,7 @@ POS_TYPES = [
     "Zenoti",
     "Supersalon",
     "opensalonpro",
-]  # Only Zenoti supported for now. Other POS_TYPES require calling api-booking.regiscorp.com instead of zentoi directly
+]
 
 
 BASE_REGIS_API_URL = "https://api.regiscorp.com"
