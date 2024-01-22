@@ -136,25 +136,17 @@ To use the library, you will need an API key and salon ID at a minimum. Here's a
 ```python
 import opencuts.opencuts as opencuts
 
-SALON_ID = 1234
-REGIS_API_KEY = abc123
-REGIS_API_BOOKING_KEY = abc123
-MY_STYLIST = 
-MY_SERVICE = Supercut
+SALON_ID = "82227"
+REGIS_API_KEY = "abc123"
+REGIS_API_BOOKING_KEY = "abc123"
+MY_STYLIST = ""
+MY_SERVICE = "Supercut"
 
 # Instantiate the class and get some information about the salon
-myStore = opencuts.RegisSalon(SALON_ID, REGIS_API_KEY)
+myStore = opencuts.RegisSalon(SALON_ID, REGIS_API_KEY, REGIS_API_BOOKING_KEY)
 myStore.get_salon()  # get salon information
 myStore.get_salon_services()  # get all the services the salon offers
 myStore.get_therapists_working()  # get the stylist information
-
-# look up the ID for the stylist and service
-selected_stylist = myStore.find_stylist_by_name(MY_STYLIST)
-selected_service = myStore.find_service_by_name(MY_SERVICE)
-
-# get some booking slots for the stylist and service selected
-booking_id = myStore.create_service_booking(selected_service, selected_stylist)
-booking_slots = myStore.get_booking_slot(booking_id)
 
 # Show Store Services
 print("\nStore Services:\n")
