@@ -2,7 +2,7 @@
 
 **`openCuts`** 💇 is an open-source Python library designed to interface with popular salons using public and private API's. It provides a common interface to the  [Zentoi](https://docs.zenoti.com/reference) (Supercuts), Regis (Supercuts) and StylewareTouch (Greatclips) API's to provide a seamless experience for retrieving salon services, scheduling appointments, and more. This is meant to be used to build future extensions for Home Assistant, Voice Assistants, etc.
 
-This repo includes `supercuts-sli` which is small CLI program that allows you to book haricuts and other serivces at regis salons, and serves as an example of using this library.
+This repo includes `supercuts-cli` which is small CLI program that allows you to book haricuts and other serivces at regis salons, and serves as an example of using this library.
 
 ## Disclaimer  ✂
 
